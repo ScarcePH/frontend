@@ -1,5 +1,12 @@
-# Scarce Admin 
+# Scarce web store
 
+* Product catalog
+* Login/Registration of user
+* Cart items
+* Guest/User Product checkout
+* Checkout product 
+
+# Scarce Admin 
 
 ### 1. Dashboard
 
