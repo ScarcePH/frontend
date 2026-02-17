@@ -1,5 +1,5 @@
 import { apiClient } from "@/api/apiClient";
-import type { AddToCartParams } from "@/types/cart";
+import type { AddToCartParams, RemoveFromCartParams } from "@/types/cart";
 
 
 export const getCart = () => {
@@ -13,3 +13,6 @@ export function addToCart(payload: AddToCartParams) {
   );
 }
 
+export function removeFromCart(payload: RemoveFromCartParams) {
+  return apiClient.post("/cart/remove", payload);
+}

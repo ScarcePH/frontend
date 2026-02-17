@@ -6,17 +6,21 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { ShoppingCart } from "lucide-react"
-import { useGetCart } from "./hooks/useCart"
+import { ShoppingCart, X } from "lucide-react"
+import { useGetCart, useRemoveFromCart } from "./hooks/useCart"
 import { formatPeso } from "@/utils/dashboard"
 import { useNavigate } from "react-router"
 import { useStartCheckout } from "@/features/checkout/hooks/useCheckout"
 import { toast } from "sonner"
+import { Spinner } from "@/components/ui/spinner"
+import { useState } from "react"
 
 export function AppCart() {
   const{data}=useGetCart()
+  const removeFromCart = useRemoveFromCart()
   const navigate = useNavigate()
   const startCheckout = useStartCheckout()
+  const [index, setIndex] = useState<null|number>(null)
 
   const handleCheckout = async () => {
     try {
@@ -31,6 +35,23 @@ export function AppCart() {
       toast.error(e?.message || "Failed to start checkout.")
     }
   }
+
+  const handleRemovePair = async (key:number, inventoryId: number, variationId: number) => {
+    
+    try {
+      setIndex(key)
+      await removeFromCart.mutateAsync({
+        inventory_id: inventoryId,
+        variation_id: variationId,
+      })
+      setIndex(null)
+      toast.success("Removed from cart")
+    } catch (e: any) {
+      setIndex(null)
+      toast.error(e?.message || "Failed to remove pair from cart.")
+    }
+  }
+
   return (
     <Popover>
       <PopoverTrigger asChild>
@@ -56,9 +77,35 @@ export function AppCart() {
               MY CART
             </p>
       
-            { data?.items.map((item)=>
-              <p> * {item.inventory_name}</p>
-            )}
+            {data?.items.map((item,key) => (
+              <div
+                key={`${item.inventory_id}-${item.variation_id}`}
+                className="flex items-center justify-between gap-4"
+              >
+                <img
+                      src={item.image}
+                      alt={item.inventory_name}
+                      className="mr-2 w-20 rounded-sm object-fit"
+                />
+                <div className="text-sm leading-tight">
+                  <p>{item.inventory_name}</p>
+                  <p className="text-xs text-muted-foreground">
+                    Condition: {item.condition || "N/A"} <br/>
+                    Size: {item.size || "N/A"}  <br/>
+                    Price: {formatPeso(item.price||0)}
+                  </p>
+                </div>
+                <Button
+                  size="icon-xs"
+                  variant="ghost"
+                  aria-label="Remove pair"
+                  onClick={() => handleRemovePair(key, item.inventory_id, item.variation_id)}
+                  disabled={removeFromCart.isPending&&index===key}
+                >
+                { removeFromCart.isPending&&index===key?<Spinner/> : <X />}
+                </Button>
+              </div>
+            ))}
             <div className="flex justify-between">
               <p>Total: {formatPeso(data?.total||0)}</p>
               {data?.items?.length ? (
