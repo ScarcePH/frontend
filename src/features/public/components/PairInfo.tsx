@@ -7,6 +7,7 @@ import { useStartCheckout } from "@/features/checkout/hooks/useCheckout";
 import { toast } from "sonner";
 import CarouselWithFullScreen from "@/components/CarouselWithFullScreen";
 import { useNavigate } from "react-router";
+import { Spinner } from "@/components/ui/spinner";
 
 
 type PairProps = {
@@ -17,7 +18,7 @@ export default function PairInfo ({pair}:PairProps) {
     const [selected, setSelected] = useState<VariationObj|null>(null)
     const [carousel, setCarousel] = useState<string[]>([pair.image])
 
-    const {mutate:addToCart} = useAddToCart()
+    const {mutate:addToCart, isPending:addingTocart} = useAddToCart()
     const startCheckout = useStartCheckout()
     const navigate = useNavigate()
 
@@ -27,7 +28,22 @@ export default function PairInfo ({pair}:PairProps) {
         }
         const payload = {inventory_id:pair.id, variation_id:selected?.id}
         await addToCart(payload, {
-            onSuccess:()=>toast.success('Added to cart'),
+            onSuccess:()=>{
+                const itemImage = pair.image
+                toast.custom(() => (
+                    <div className="flex items-center gap-3 rounded-md border bg-background p-3 shadow-sm">
+                        <img
+                            src={itemImage}
+                            alt={pair.name}
+                            className=" w-20 rounded-sm object-fit"
+                        />
+                        <div className="leading-tight">
+                            <p className="text-sm font-medium">Added to cart</p>
+                            <p className="text-xs text-muted-foreground">{pair.name}</p>
+                        </div>
+                    </div>
+                ))
+            },
             onError:(e)=>toast.error('Failed add to cart '+ e)
         })
     }
@@ -107,13 +123,13 @@ export default function PairInfo ({pair}:PairProps) {
             }
             <div className="mt-9 flex justify-center space-x-5">
                 <Button 
-                    disabled={!selected}
+                    disabled={!selected || addingTocart}
                     onClick={handleAddtoCart}
                 >
-                    Add to cart
+                   { addingTocart? <Spinner/>: "Add to cart"}
                 </Button>
                 <Button disabled={!selected || startCheckout.isPending} onClick={handleCheckout}>
-                    Checkout
+                    {startCheckout.isPending? <Spinner/>: "Checkout"}
                 </Button>
             </div>
 

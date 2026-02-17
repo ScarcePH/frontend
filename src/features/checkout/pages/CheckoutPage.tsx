@@ -20,6 +20,7 @@ import { getPaymentOcrStatus } from "../api"
 import { toast } from "sonner"
 import { useEffect, useState, type FormEvent } from "react"
 import { useNavigate } from "react-router"
+import { ArrowLeft } from "lucide-react"
 
 const POLL_INTERVAL_MS = 2000
 const MAX_POLL_ATTEMPTS = 12
@@ -132,6 +133,15 @@ function CheckoutPage() {
     <div className="mx-auto w-full max-w-6xl px-3 md:px-6 py-6 md:py-10 space-y-6">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
+          <Button
+            type="button"
+            variant="ghost"
+            size="sm"
+            className="mb-2"
+            onClick={() => navigate(-1)}
+          >
+            <ArrowLeft /> Back
+          </Button>
           <p className="text-sm text-muted-foreground">Checkout</p>
           <h1 className="text-2xl md:text-3xl font-semibold">Complete your order</h1>
         </div>
