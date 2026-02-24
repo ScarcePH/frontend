@@ -72,12 +72,30 @@ export function CustomerDetailsForm({
             </FieldGroup>
           </FieldSet>
 
+          <FieldSet>
+            <FieldGroup>
+              <Field>
+                <FieldLabel>Payment Method</FieldLabel>
+                <p>
+                  As of now we do not have an integrated payment gateway. Please make a bank transfer to the following account and upload a screenshot of your payment as proof of payment. This requires manual verfication on our end.
+                </p>
+                <div className="flex justify-center py-4">
+                <img
+                  className="w-50 object-fit"
+                  src="/image/PAYMENT_QR.PNG"
+                />
+                </div>
+              </Field>
+            </FieldGroup>
+          </FieldSet>
+
+
           <Separator />
 
           <FieldSet>
             <FieldGroup>
               <Field>
-                <FieldLabel>Upload payment proof</FieldLabel>
+                <FieldLabel>Upload a screenshot of your payment as proof of payment</FieldLabel>
                 <Input type="file" accept="image/*" onChange={(e) => onFileChange(e.target.files?.[0] ?? null)} />
                 <p className="mb-2 mt-2 text-xs text-muted-foreground">{FILE_HELPER_TEXT}</p>
               </Field>
