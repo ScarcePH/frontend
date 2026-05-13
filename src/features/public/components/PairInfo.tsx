@@ -9,16 +9,11 @@ import CarouselWithFullScreen from "@/components/CarouselWithFullScreen";
 import { useNavigate } from "react-router";
 import { Spinner } from "@/components/ui/spinner";
 import { formatPeso } from "@/utils/dashboard";
+import { getPairAvailability, isAvailableVariation } from "../utils/catalog";
 
 
 type PairProps = {
     pair:PairObj
-}
-
-function isAvailableVariation(variation: VariationObj) {
-    const status = variation.status?.toLowerCase() ?? ""
-
-    return variation.stock > 0 && !["sold", "unavailable", "inactive"].includes(status)
 }
 
 function getErrorMessage(error: unknown, fallback: string) {
@@ -28,7 +23,7 @@ function getErrorMessage(error: unknown, fallback: string) {
 export default function PairInfo ({pair}:PairProps) {
     const [selected, setSelected] = useState<VariationObj|null>(null)
     const selectedValue = selected ? String(selected.id) : ""
-    const availableVariations = pair.variations.filter(isAvailableVariation)
+    const { availableVariations } = getPairAvailability(pair)
     const hasAvailableVariations = availableVariations.length > 0
     const carousel = useMemo(() => {
         if (!selected?.image?.length) {
@@ -141,6 +136,11 @@ export default function PairInfo ({pair}:PairProps) {
                         )}
                     </ToggleGroup>
                 </div>
+                     {selected ? (
+                <div className="text-xs text-muted-foreground">
+                    {selected.stock > 1 ? `${selected.stock} pairs left in this size.` : "Only 1 pair left in this size."}
+                </div>
+            ) : null}
             </div>
             <div className="rounded-md border p-4">
                 {selected ? (
@@ -164,23 +164,20 @@ export default function PairInfo ({pair}:PairProps) {
                     </p>
                 )}
             </div>
+            {selected?
             <div className="grid gap-3 sm:grid-cols-2">
                 <Button 
                     className="w-full"
                     disabled={!selected || addingTocart}
                     onClick={handleAddtoCart}
                 >
-                   {addingTocart ? <Spinner/> : selected ? "Add to cart" : "Select a size"}
+                   {addingTocart ? <Spinner/> :  "Add to cart"}
                 </Button>
                 <Button className="w-full" disabled={!selected || startCheckout.isPending} onClick={handleCheckout}>
-                    {startCheckout.isPending ? <Spinner/> : selected ? "Checkout" : "Select a size"}
+                    {startCheckout.isPending ? <Spinner/> : "Checkout" }
                 </Button>
             </div>
-            {selected ? (
-                <div className="text-xs text-muted-foreground">
-                    {selected.stock > 1 ? `${selected.stock} pairs left in this size.` : "Only 1 pair left in this size."}
-                </div>
-            ) : null}
+            :null}
         </div>
     )
 }

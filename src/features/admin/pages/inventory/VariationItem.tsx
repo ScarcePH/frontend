@@ -168,7 +168,7 @@ export function VariationItem({
                           required 
                           type="number" 
                           className="text-xs w-full"  
-                          value={data.stock === 0 ? "" : data.stock}
+                          value={ data.stock || 0}
                           onChange={e => onUpdate("stock", Number(e.target.value))}
                       /> 
                   </div> 

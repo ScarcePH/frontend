@@ -75,7 +75,7 @@ export default function NewCustomer ({setStep,setCustomerData}:Props) {
             <Button 
                 variant='secondary' 
                 onClick={submit}
-                disabled={addCustomerMutation.isPending||!customer.name||!customer.sender_id}
+                disabled={addCustomerMutation.isPending||!customer.name}
             >
                {addCustomerMutation.isPending?  "Creating customer...":"Next"}
             </Button>

@@ -19,13 +19,13 @@ export function PairList(){
             Curated pairs, ready to browse.
           </h1>
           <p className="mt-3 text-base leading-7 text-muted-foreground">
-            A focused collection of available sneakers from the Scarce archive.
+            A focused collection of sneakers from the Scarce archive.
           </p>
         </div>
         <div className="rounded-md border px-4 py-3 text-sm">
           <span className="font-medium">{isLoading ? 'Loading' : pairCount}</span>
           <span className="ml-1 text-muted-foreground">
-            {pairCount === 1 ? 'available pair' : 'available pairs'}
+            {pairCount === 1 ? 'pair' : 'pairs'}
           </span>
         </div>
       </section>
@@ -49,7 +49,7 @@ export function PairList(){
       ) : (
         <div className="flex min-h-80 items-center justify-center rounded-md border border-dashed px-6 text-center">
           <div className="max-w-md">
-            <h2 className="text-lg font-medium">No pairs available</h2>
+            <h2 className="text-lg font-medium">No pairs listed</h2>
             <p className="mt-2 text-sm leading-6 text-muted-foreground">
               The collection is empty right now. Check back when new archive pairs are listed.
             </p>

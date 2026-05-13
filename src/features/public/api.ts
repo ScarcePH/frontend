@@ -1,9 +1,6 @@
-import { apiClient } from "@/api/apiClient";
+import { apiClient } from '@/api/apiClient'
+import type { PairObj } from '@/types/pair'
 
-
-
-export function getAllAvailPairs() {
-  return apiClient.get("inventory/get-all-available");
+export function getProductCatalog(): Promise<PairObj[]> {
+  return apiClient.get('inventory/catalog')
 }
-
-

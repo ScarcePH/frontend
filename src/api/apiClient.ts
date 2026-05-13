@@ -47,7 +47,7 @@ export function normalizeApiError(error: unknown): ApiError {
     const data = error.response?.data as any;
 
     return createApiError(
-      data?.message || error.message || "Request failed",
+      data?.message || data.error || error.message || "Request failed",
       status,
       data?.code
     );

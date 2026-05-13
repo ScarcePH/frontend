@@ -17,4 +17,8 @@ export type PairObj  = {
     image:string
     variations: VariationObj[];
     id:number
+    status?: string
+    is_sold?: boolean
+    is_available?: boolean
+    availability_status?: 'available' | 'sold'
 }

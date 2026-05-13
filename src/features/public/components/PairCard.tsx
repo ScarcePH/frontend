@@ -1,34 +1,16 @@
 import { Dialog, DialogContent, DialogTitle, DialogTrigger } from '@/components/ui/dialog'
 import { Item, ItemContent, ItemHeader, ItemTitle } from '@/components/ui/item'
-import type { PairObj, VariationObj } from '@/types/pair'
+import type { PairObj } from '@/types/pair'
 import { formatPeso } from '@/utils/dashboard'
 import PairInfo from './PairInfo'
+import { getPairAvailability } from '../utils/catalog'
 
 type PairProps = {
   pair: PairObj
 }
 
-function isAvailableVariation(variation: VariationObj) {
-  const status = variation.status?.toLowerCase() ?? ''
-
-  return variation.stock > 0 && !['sold', 'unavailable', 'inactive'].includes(status)
-}
-
-function getPairSummary(pair: PairObj) {
-  const availableVariations = pair.variations.filter(isAvailableVariation)
-  const prices = availableVariations.map((variation) => variation.price).filter(Boolean)
-  const sizeCount = new Set(availableVariations.map((variation) => variation.size)).size
-  const startingPrice = prices.length ? Math.min(...prices) : null
-
-  return {
-    isSoldOut: availableVariations.length === 0,
-    sizeCount,
-    startingPrice,
-  }
-}
-
 export function PairCard({pair}:PairProps){
-  const { isSoldOut, sizeCount, startingPrice } = getPairSummary(pair)
+  const { isSold, isSoldOut, sizeCount, startingPrice } = getPairAvailability(pair)
 
   return(
     <Dialog>
@@ -40,7 +22,12 @@ export function PairCard({pair}:PairProps){
           className="h-full cursor-pointer content-start gap-0 overflow-hidden rounded-md bg-card p-0 transition duration-200 hover:-translate-y-0.5 hover:border-foreground/30 hover:shadow-sm focus-visible:ring-2 focus-visible:ring-ring"
         >
           <ItemHeader className="block">
-            <div className="aspect-[4/3] w-full overflow-hidden bg-muted">
+            <div className="relative aspect-[4/3] w-full overflow-hidden bg-muted">
+              {isSold ? (
+                <span className="absolute right-2 top-2 rounded-sm bg-background/95 px-2 py-1 text-[10px] font-medium uppercase text-muted-foreground shadow-sm">
+                  Sold
+                </span>
+              ) : null}
               <img
                 src={pair.image}
                 alt={pair.name}
