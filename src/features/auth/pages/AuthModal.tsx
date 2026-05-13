@@ -1,5 +1,5 @@
 
-import { useLogin, useRegister } from "../hooks/useAuth";
+import { useForgotPassword, useLogin, useRegister } from "../hooks/useAuth";
 import { toast } from "sonner";
 import AuthForm from "../components/AuthForm";
 import { useState } from "react";
@@ -13,6 +13,7 @@ export default function AuthModal() {
     const [open, setOpen] = useState<boolean>(false)
     const { mutate:Login, isPending:logging } = useLogin();
     const { mutate:Register, isPending:registering } = useRegister()
+    const { mutate:ForgotPassword, isPending:sendingReset } = useForgotPassword()
     const [isLogin, setIsLogin] = useState(true)
 
 
@@ -24,6 +25,7 @@ export default function AuthModal() {
         {
             isLogin ? 
                 <AuthForm
+                    key={`${isLogin}-${open ? 'open' : 'closed'}`}
                     open={open}
                     onOpenChange={setOpen}
                     title="Login"
@@ -31,16 +33,27 @@ export default function AuthModal() {
                     footerText="Don't have an account?"
                     footerActionLabel="Register"
                     onFooterAction={() => setIsLogin(!isLogin)}
+                    onForgotPassword={(email) =>
+                        ForgotPassword({ email }, {
+                            onSuccess: (response) => toast.success(response.message),
+                            onError: (err) => toast.error(err.message),
+                        })
+                    }
                     isPending={logging}
+                    isForgotPending={sendingReset}
                     onSubmit={(data) =>
                         Login(data, {
-                            onSuccess: () => queryClient.invalidateQueries({ queryKey: ['get-cart'] }),
+                            onSuccess: () => {
+                                queryClient.invalidateQueries({ queryKey: ['get-cart'] })
+                                setOpen(false)
+                            },
                             onError: (err) => toast.error(err.message),
                         })
                     }
                 />
                 :
                 <AuthForm
+                    key={`${isLogin}-${open ? 'open' : 'closed'}`}
                     open={open}
                     onOpenChange={setOpen}
                     title="Register"
@@ -64,4 +77,3 @@ export default function AuthModal() {
   
     
 }
-

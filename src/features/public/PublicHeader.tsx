@@ -1,31 +1,25 @@
+import AuthModal from '../auth/pages/AuthModal'
+import { AppCart } from '../cart/AppCart'
 
-import AuthModal from "../auth/pages/AuthModal";
-import { AppCart } from "../cart/AppCart";
 export function PublicHeader(){
-    
     return(
-        <div className="sticky top-0 z-10 backdrop-blur space-y-3 mb-2 flex justify-between pb-3 pt-3">
-            <div className="flex w-full justify-between">
-                <div className="flex space-x-2 items-center">
-                    <div>
-                        <p className="text-md">
-                            Archives by
-                        </p>
-                    </div>
-                    <div className="">
-                        <img
-                            src="/image/ScarceLogo.PNG"
-                            className="w-15  object-fit"
-
-                        />
-                    </div>
+        <header className="sticky top-0 z-20 border-b bg-background/90 backdrop-blur supports-[backdrop-filter]:bg-background/75">
+            <div className="mx-auto flex min-h-16 w-full max-w-7xl items-center justify-between gap-3 px-4 sm:px-6 lg:px-8">
+                <div className="flex min-w-0 items-center gap-2">
+                    <p className="hidden text-sm text-muted-foreground sm:block">
+                        Archives by
+                    </p>
+                    <img
+                        src="/image/ScarceLogo.PNG"
+                        alt="Scarce"
+                        className="h-8 w-auto object-contain"
+                    />
                 </div>
-                <div className="flex items-center space-x-4">
+                <div className="flex shrink-0 items-center gap-2 sm:gap-3">
                     <AppCart/>
                     <AuthModal/>
                 </div>
             </div>
-            
-        </div>
+        </header>
     )
 }

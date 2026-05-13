@@ -15,6 +15,15 @@ export type AuthParams = {
     password:string
 }
 
+export type ForgotPasswordParams = {
+  email: string
+}
+
+export type ResetPasswordParams = {
+  token: string
+  password: string
+}
+
 export function checkToken() {
   return apiClient.get("/auth/validate");
 }
@@ -31,6 +40,14 @@ export function registerRequest(payload:AuthParams){
     "/auth/register",
     payload
   );
+}
+
+export function forgotPasswordRequest(payload: ForgotPasswordParams) {
+  return apiClient.post("/auth/forgot-password", payload)
+}
+
+export function resetPasswordRequest(payload: ResetPasswordParams) {
+  return apiClient.post("/auth/reset-password", payload)
 }
 
 export function logoutRequest(){

@@ -22,7 +22,7 @@ export function MobileSheet({user}:{user:string}) {
       <SheetContent >
         <SheetTitle/>
         <SheetHeader>
-            <img src="/image/ScarceLogo.PNG" className="w-24 object-fit" />
+            <img src="/image/ScarceLogo.PNG" alt="Scarce logo" className="w-24 object-contain" />
         </SheetHeader>
        
         <div className="p-2 space-y-4">

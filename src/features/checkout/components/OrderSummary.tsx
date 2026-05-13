@@ -11,7 +11,7 @@ function OrderSummaryItem({ item }: { item: CheckoutSessionItem }) {
   return (
     <Item variant="outline" size="sm">
       {item.inventory?.image ? (
-        <img src={item.inventory.image} alt={item.inventory?.name ?? "Item image"} className="w-23 rounded-sm object-fit" />
+        <img src={item.inventory.image} alt={item.inventory?.name ?? "Item image"} className="h-20 w-20 rounded-sm bg-muted object-contain" />
       ) : null}
       <ItemHeader>
         <ItemTitle className="capitalize">{item.inventory?.name ?? "Item"}</ItemTitle>
@@ -31,7 +31,7 @@ export function OrderSummary({ isLoading, hasSessionId, sessionItems, sessionTot
   const hasItems = sessionItems.length > 0
 
   return (
-    <Card>
+    <Card className="lg:sticky lg:top-6 lg:self-start">
       <CardHeader className="border-b">
         <CardTitle>Order Summary</CardTitle>
         <CardDescription>Review your items and totals.</CardDescription>

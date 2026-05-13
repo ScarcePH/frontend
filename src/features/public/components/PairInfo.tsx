@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import type { PairObj, VariationObj } from "@/types/pair";
-import { useEffect, useState } from "react";
+import { useMemo, useState } from "react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group"
 import { useAddToCart } from "@/features/cart/hooks/useCart";
 import { useStartCheckout } from "@/features/checkout/hooks/useCheckout";
@@ -8,15 +8,36 @@ import { toast } from "sonner";
 import CarouselWithFullScreen from "@/components/CarouselWithFullScreen";
 import { useNavigate } from "react-router";
 import { Spinner } from "@/components/ui/spinner";
+import { formatPeso } from "@/utils/dashboard";
 
 
 type PairProps = {
     pair:PairObj
 }
 
+function isAvailableVariation(variation: VariationObj) {
+    const status = variation.status?.toLowerCase() ?? ""
+
+    return variation.stock > 0 && !["sold", "unavailable", "inactive"].includes(status)
+}
+
+function getErrorMessage(error: unknown, fallback: string) {
+    return error instanceof Error ? error.message : fallback
+}
+
 export default function PairInfo ({pair}:PairProps) {
     const [selected, setSelected] = useState<VariationObj|null>(null)
-    const [carousel, setCarousel] = useState<string[]>([pair.image])
+    const selectedValue = selected ? String(selected.id) : ""
+    const availableVariations = pair.variations.filter(isAvailableVariation)
+    const hasAvailableVariations = availableVariations.length > 0
+    const carousel = useMemo(() => {
+        if (!selected?.image?.length) {
+            return [pair.image]
+        }
+
+        const selectedImages = Array.isArray(selected.image) ? selected.image : [selected.image]
+        return [pair.image, ...selectedImages]
+    }, [pair.image, selected])
 
     const {mutate:addToCart, isPending:addingTocart} = useAddToCart()
     const startCheckout = useStartCheckout()
@@ -35,7 +56,7 @@ export default function PairInfo ({pair}:PairProps) {
                         <img
                             src={itemImage}
                             alt={pair.name}
-                            className=" w-20 rounded-sm object-fit"
+                            className="h-20 w-20 rounded-sm object-contain"
                         />
                         <div className="leading-tight">
                             <p className="text-sm font-medium">Added to cart</p>
@@ -68,44 +89,52 @@ export default function PairInfo ({pair}:PairProps) {
                 return
             }
             navigate(`/checkout?sessionId=${checkoutSessionId}`)
-        } catch (e: any) {
-            toast.error(e?.message || "Failed to start checkout.")
+        } catch (e: unknown) {
+            toast.error(getErrorMessage(e, "Failed to start checkout."))
         }
     }
 
-    useEffect(()=>{
-        selected?.image?.length ? 
-            setCarousel([pair.image, ...selected.image])
-            :
-            setCarousel([pair.image])
-    },[selected])    
-
     return (
-        <div>
-            <div className="shrink-0 flex justify-center py-2">
+        <div className="space-y-5">
+            <div className="shrink-0 flex justify-center rounded-md bg-muted/40 py-3">
                <CarouselWithFullScreen images={carousel}/>
             </div>
-            <p className="text-center mb-2">
-                {pair.name}
-            </p>
-            <p className="text-muted-foreground text-left text-sm mb-3">
-                {pair.description}
-            </p>
+            <div className="space-y-2">
+                <p className="text-xl font-semibold leading-tight">
+                    {pair.name}
+                </p>
+                <p className="text-muted-foreground text-sm leading-6">
+                    {pair.description}
+                </p>
+            </div>
            
-            <div className="flex justify-center w-full items-center">
-                 <p>Size:</p>
-                <div className=" overflow-scroll w-full pl-2 pr-2 flex ">
+            <div className="space-y-3">
+                <div className="flex items-center justify-between gap-3">
+                    <p className="text-sm font-medium">Select size</p>
+                    <p className="text-xs text-muted-foreground">
+                        {hasAvailableVariations ? `${availableVariations.length} available` : "Sold out"}
+                    </p>
+                </div>
+                <div className="w-full overflow-x-auto pb-1">
                     <ToggleGroup
                         type="single"
                         size="sm"
                         variant="outline"
                         spacing={2}
+                        value={selectedValue}
+                        onValueChange={(value) => {
+                            const nextVariation = pair.variations.find((variation) => String(variation.id) === value)
+                            setSelected(nextVariation && isAvailableVariation(nextVariation) ? nextVariation : null)
+                        }}
+                        className="flex-wrap justify-start"
                     >
                         {pair.variations.map((data)=>
                             <ToggleGroupItem 
-                                onClick={()=>setSelected(data)}
-                                value={data.size}
-                                className="pt-0 pb-0"
+                                key={data.id}
+                                value={String(data.id)}
+                                disabled={!isAvailableVariation(data)}
+                                aria-label={`Size ${data.size} US${isAvailableVariation(data) ? "" : " unavailable"}`}
+                                className="min-h-9 px-3 disabled:line-through"
                             > 
                                 {data.size}us
                             </ToggleGroupItem>
@@ -113,26 +142,45 @@ export default function PairInfo ({pair}:PairProps) {
                     </ToggleGroup>
                 </div>
             </div>
-            {selected&&
-                <div className="space-y-1 mt-6">
-                    <p>Condition: {selected?.condition}</p>
-                    <p>Price: ₱{selected.price}</p>
-                </div>
-         
-                
-            }
-            <div className="mt-9 flex justify-center space-x-5">
+            <div className="rounded-md border p-4">
+                {selected ? (
+                    <div className="grid gap-3 text-sm sm:grid-cols-3">
+                        <div>
+                            <p className="text-xs text-muted-foreground">Selected size</p>
+                            <p className="font-medium">{selected.size} US</p>
+                        </div>
+                        <div>
+                            <p className="text-xs text-muted-foreground">Condition</p>
+                            <p className="font-medium">{selected.condition}</p>
+                        </div>
+                        <div>
+                            <p className="text-xs text-muted-foreground">Price</p>
+                            <p className="font-medium">{formatPeso(selected.price)}</p>
+                        </div>
+                    </div>
+                ) : (
+                    <p className="text-sm text-muted-foreground">
+                        {hasAvailableVariations ? "Choose an available size to continue." : "This pair is currently sold out."}
+                    </p>
+                )}
+            </div>
+            <div className="grid gap-3 sm:grid-cols-2">
                 <Button 
+                    className="w-full"
                     disabled={!selected || addingTocart}
                     onClick={handleAddtoCart}
                 >
-                   { addingTocart? <Spinner/>: "Add to cart"}
+                   {addingTocart ? <Spinner/> : selected ? "Add to cart" : "Select a size"}
                 </Button>
-                <Button disabled={!selected || startCheckout.isPending} onClick={handleCheckout}>
-                    {startCheckout.isPending? <Spinner/>: "Checkout"}
+                <Button className="w-full" disabled={!selected || startCheckout.isPending} onClick={handleCheckout}>
+                    {startCheckout.isPending ? <Spinner/> : selected ? "Checkout" : "Select a size"}
                 </Button>
             </div>
-
+            {selected ? (
+                <div className="text-xs text-muted-foreground">
+                    {selected.stock > 1 ? `${selected.stock} pairs left in this size.` : "Only 1 pair left in this size."}
+                </div>
+            ) : null}
         </div>
     )
 }

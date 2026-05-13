@@ -7,13 +7,14 @@ export type StartCheckoutPayload =
 
 export type StartCheckoutResponse = {
   id: string
+  checkout_session_id: string
   status?: string
   total_price?: number
   expires_at?: string
 }
 
 export function startCheckout(payload: StartCheckoutPayload) {
-  return apiClient.post("/checkout/start", payload)
+  return apiClient.post("/checkout/start", payload) as Promise<StartCheckoutResponse>
 }
 
 
@@ -83,7 +84,5 @@ export function submitCheckoutProof(payload: SubmitProofPayload) {
 }
 
 export function getPaymentOcrStatus(jobId: string, checkoutSessionId:string) {
-  console.log('checkoutSessionId',checkoutSessionId);
-  
   return apiClient.get(`/payment/status/${jobId}/${checkoutSessionId}`) as Promise<OcrStatusResponse>
 }

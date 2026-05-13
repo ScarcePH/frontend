@@ -1,5 +1,15 @@
 import { useMutation, useQuery } from "@tanstack/react-query";
-import { loginRequest, checkToken, type AuthParams, registerRequest, logoutRequest } from "../api";
+import {
+  loginRequest,
+  checkToken,
+  type AuthParams,
+  registerRequest,
+  logoutRequest,
+  forgotPasswordRequest,
+  resetPasswordRequest,
+  type ForgotPasswordParams,
+  type ResetPasswordParams,
+} from "../api";
 import { useQueryClient } from "@tanstack/react-query";
 
 
@@ -33,6 +43,19 @@ export const useRegister = () => {
           queryClient.invalidateQueries({ queryKey: ["auth-check"] });
         },
     });
+}
+
+export const useForgotPassword = () => {
+  return useMutation({
+    mutationFn: ({ email }: ForgotPasswordParams) => forgotPasswordRequest({ email }),
+  });
+}
+
+export const useResetPassword = () => {
+  return useMutation({
+    mutationFn: ({ token, password }: ResetPasswordParams) =>
+      resetPasswordRequest({ token, password }),
+  });
 }
 
 export const useLogout = () => {

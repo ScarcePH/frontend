@@ -15,14 +15,24 @@ import { toast } from "sonner"
 import { Spinner } from "@/components/ui/spinner"
 import { useState } from "react"
 
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback
+}
+
 export function AppCart() {
-  const{data}=useGetCart()
+  const{data, isLoading}=useGetCart()
   const removeFromCart = useRemoveFromCart()
   const navigate = useNavigate()
   const startCheckout = useStartCheckout()
   const [index, setIndex] = useState<null|number>(null)
+  const items = data?.items ?? []
+  const hasItems = items.length > 0
 
   const handleCheckout = async () => {
+    if (!hasItems) {
+      return
+    }
+
     try {
       const session = await startCheckout.mutateAsync({ source: "cart" })
       const checkoutSessionId = session?.checkout_session_id
@@ -31,8 +41,8 @@ export function AppCart() {
         return
       }
       navigate(`/checkout?sessionId=${checkoutSessionId}`)
-    } catch (e: any) {
-      toast.error(e?.message || "Failed to start checkout.")
+    } catch (e: unknown) {
+      toast.error(getErrorMessage(e, "Failed to start checkout."))
     }
   }
 
@@ -46,9 +56,9 @@ export function AppCart() {
       })
       setIndex(null)
       toast.success("Removed from cart")
-    } catch (e: any) {
+    } catch (e: unknown) {
       setIndex(null)
-      toast.error(e?.message || "Failed to remove pair from cart.")
+      toast.error(getErrorMessage(e, "Failed to remove pair from cart."))
     }
   }
 
@@ -70,35 +80,42 @@ export function AppCart() {
         </Button>
         </div>
       </PopoverTrigger>
-      <PopoverContent className="w-90 mr-5 mt-2">
-        {data?.items.length? (
-          <div className="space-y-5">
-            <p className="font-medium">
+      <PopoverContent className="mr-3 mt-2 w-[min(calc(100vw-1.5rem),24rem)] p-0">
+        {isLoading ? (
+          <div className="flex items-center gap-2 p-4 text-sm text-muted-foreground">
+            <Spinner />
+            Loading cart...
+          </div>
+        ) : hasItems ? (
+          <div className="space-y-4 p-4">
+            <p className="font-medium tracking-wide">
               MY CART
             </p>
       
-            {data?.items.map((item,key) => (
+            <div className="max-h-[55dvh] space-y-3 overflow-y-auto pr-1">
+            {items.map((item,key) => (
               <div
                 key={`${item.inventory_id}-${item.variation_id}`}
-                className="flex items-center justify-between gap-4"
+                className="grid grid-cols-[4.5rem_1fr_auto] items-center gap-3 rounded-md border p-2"
               >
                 <img
                       src={item.image}
                       alt={item.inventory_name}
-                      className="mr-2 w-20 rounded-sm object-fit"
+                      className="h-16 w-16 rounded-sm bg-muted object-contain"
                 />
-                <div className="text-sm leading-tight">
-                  <p>{item.inventory_name}</p>
-                  <p className="text-xs text-muted-foreground">
-                    Condition: {item.condition || "N/A"} <br/>
-                    Size: {item.size || "N/A"}  <br/>
-                    Price: {formatPeso(item.price||0)}
+                <div className="min-w-0 text-sm leading-tight">
+                  <p className="font-medium leading-5">{item.inventory_name}</p>
+                  <p className="mt-1 text-xs text-muted-foreground">
+                    Size {item.size || "N/A"} US · {item.condition || "N/A"}
+                  </p>
+                  <p className="mt-1 text-xs font-medium">
+                    {formatPeso(item.price||0)}
                   </p>
                 </div>
                 <Button
                   size="icon-xs"
                   variant="ghost"
-                  aria-label="Remove pair"
+                  aria-label={`Remove ${item.inventory_name} from cart`}
                   onClick={() => handleRemovePair(key, item.inventory_id, item.variation_id)}
                   disabled={removeFromCart.isPending&&index===key}
                 >
@@ -106,27 +123,31 @@ export function AppCart() {
                 </Button>
               </div>
             ))}
-            <div className="flex justify-between">
-              <p>Total: {formatPeso(data?.total||0)}</p>
-              {data?.items?.length ? (
+            </div>
+            <div className="flex items-center justify-between border-t pt-4">
+              <div>
+                <p className="text-xs text-muted-foreground">Total</p>
+                <p className="font-medium">{formatPeso(data?.total||0)}</p>
+              </div>
                 <Button
                   size="sm"
                   variant="outline"
                   onClick={handleCheckout}
-                  disabled={startCheckout.isPending}
+                  disabled={!hasItems || startCheckout.isPending}
                 >
-                  Checkout
+                  {startCheckout.isPending ? <Spinner /> : "Checkout"}
                 </Button>
-              ) : (
-                <Button size="sm" variant="outline" disabled>
-                  Checkout
-                </Button>
-              )}
             </div>
           </div>
 
         ):(
-          <p>No Items in cart</p>
+          <div className="space-y-2 p-4">
+            <p className="font-medium">Your cart is empty</p>
+            <p className="text-sm text-muted-foreground">Add an available pair before starting checkout.</p>
+            <Button size="sm" variant="outline" disabled className="w-full">
+              Checkout
+            </Button>
+          </div>
         )
             
         }

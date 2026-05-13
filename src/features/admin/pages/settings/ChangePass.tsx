@@ -26,7 +26,7 @@ export default function ChangePass(){
 
     const mutate = useMutation({
         mutationFn: ({password, newPass}:{password:string, newPass:string}) => 
-            ChangePassword(password, newPass)
+            ChangePassword(newPass, password)
     })
     return (
         <div className="w-full h-3/4 flex justify-center items-center">
@@ -103,4 +103,3 @@ export default function ChangePass(){
         </div>
     )
 }
-

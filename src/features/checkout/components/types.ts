@@ -9,6 +9,7 @@ export const DEFAULT_FORM_DATA = {
 }
 
 export type FormDataState = typeof DEFAULT_FORM_DATA
+export type CheckoutFormErrors = Partial<Record<keyof FormDataState | "proof", string>>
 
 export type OnFormFieldChange = <K extends keyof FormDataState>(
   field: K,
@@ -17,6 +18,8 @@ export type OnFormFieldChange = <K extends keyof FormDataState>(
 
 export type CustomerDetailsFormProps = {
   formData: FormDataState
+  errors: CheckoutFormErrors
+  fileName?: string
   onChange: OnFormFieldChange
   onFileChange: (nextFile: File | null) => void
   onSubmit: (e: FormEvent) => void

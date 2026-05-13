@@ -6,13 +6,19 @@ import { useNavigate } from "react-router"
 import { CheckoutHeader } from "../components/CheckoutHeader"
 import { CustomerDetailsForm } from "../components/CustomerDetailsForm"
 import { OrderSummary } from "../components/OrderSummary"
-import { DEFAULT_FORM_DATA, type FormDataState } from "../components/types"
+import { DEFAULT_FORM_DATA, type CheckoutFormErrors, type FormDataState } from "../components/types"
 
 const POLL_INTERVAL_MS = 2000
 const MAX_POLL_ATTEMPTS = 12
 const TERMINAL_OCR_STATUSES = new Set(["done", "failed"])
+const MAX_PROOF_SIZE_BYTES = 5 * 1024 * 1024
+const ALLOWED_PROOF_TYPES = new Set(["image/jpeg", "image/png"])
 
 const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms))
+
+function getErrorMessage(error: unknown, fallback: string) {
+  return error instanceof Error ? error.message : fallback
+}
 
 async function pollOcrStatus(ocrJobId: string, checkoutSessionId: string) {
   for (let attempt = 0; attempt < MAX_POLL_ATTEMPTS; attempt += 1) {
@@ -47,6 +53,7 @@ function CheckoutPage() {
   const checkoutSessionId = params.get("sessionId") ?? ""
   const checkoutSession = useGetCheckoutSession(checkoutSessionId)
   const [formData, setFormData] = useState(DEFAULT_FORM_DATA)
+  const [errors, setErrors] = useState<CheckoutFormErrors>({})
   const [file, setFile] = useState<File | null>(null)
   const [isPolling, setIsPolling] = useState(false)
 
@@ -64,6 +71,40 @@ function CheckoutPage() {
 
   const updateFormField = <K extends keyof FormDataState>(field: K, value: FormDataState[K]) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
+    setErrors((prev) => ({ ...prev, [field]: undefined }))
+  }
+
+  const validateProofFile = (nextFile: File | null) => {
+    if (!nextFile) {
+      return "Please upload your payment proof."
+    }
+    if (!ALLOWED_PROOF_TYPES.has(nextFile.type)) {
+      return "Upload a JPG or PNG payment screenshot."
+    }
+    if (nextFile.size > MAX_PROOF_SIZE_BYTES) {
+      return "Payment proof must be 5MB or smaller."
+    }
+    return undefined
+  }
+
+  const handleFileChange = (nextFile: File | null) => {
+    const proofError = validateProofFile(nextFile)
+    setFile(proofError ? null : nextFile)
+    setErrors((prev) => ({ ...prev, proof: proofError }))
+  }
+
+  const validateForm = () => {
+    const nextErrors: CheckoutFormErrors = {}
+    if (!formData.fullName.trim()) nextErrors.fullName = "Enter your full name."
+    if (!formData.email.trim()) nextErrors.email = "Enter your email address."
+    if (!formData.phone.trim()) nextErrors.phone = "Enter your phone number."
+    if (!formData.address.trim()) nextErrors.address = "Enter your delivery address."
+
+    const proofError = validateProofFile(file)
+    if (proofError) nextErrors.proof = proofError
+
+    setErrors(nextErrors)
+    return Object.keys(nextErrors).length === 0
   }
 
   const handleSubmit = async (e: FormEvent) => {
@@ -72,8 +113,9 @@ function CheckoutPage() {
       toast.error("Missing checkout session. Please restart checkout.")
       return
     }
-    if (!file) {
-      toast.error("Please upload your payment proof.")
+
+    if (!validateForm() || !file) {
+      toast.error("Please complete the checkout form.")
       return
     }
 
@@ -102,10 +144,11 @@ function CheckoutPage() {
 
       toast.success("Checkout submitted successfully.")
       setFormData(DEFAULT_FORM_DATA)
+      setErrors({})
       setFile(null)
       window.location.replace("/")
-    } catch (err: any) {
-      toast.error(err?.message || "Checkout failed. Please try again.")
+    } catch (err: unknown) {
+      toast.error(getErrorMessage(err, "Checkout failed. Please try again."))
     }
   }
 
@@ -116,8 +159,10 @@ function CheckoutPage() {
       <div className="grid gap-6 lg:grid-cols-[1.3fr_0.9fr]">
         <CustomerDetailsForm
           formData={formData}
+          errors={errors}
+          fileName={file?.name}
           onChange={updateFormField}
-          onFileChange={setFile}
+          onFileChange={handleFileChange}
           onSubmit={handleSubmit}
           canSubmit={canSubmit}
           isSubmitting={isSubmitting}
