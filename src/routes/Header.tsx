@@ -3,6 +3,7 @@ import LoadingScreen from '@/features/LoadingScreen'
 import { useAuthCheck } from '@/features/auth/hooks/useAuth'
 import { PublicHeader } from '@/features/public/PublicHeader'
 import { UserHeader } from '@/features/public/UserHeader'
+import { SocialFooter } from '@/features/public/components/SocialFooter'
 
 export const Header: React.FC = () => {
   const { data, isLoading } = useAuthCheck()
@@ -18,8 +19,8 @@ export const Header: React.FC = () => {
   }
 
   return  (
-    <div className="min-h-dvh bg-background">
-      <div className="w-full">
+    <div className="flex min-h-dvh flex-col bg-background">
+      <div className="w-full flex-1">
         { data?.user?.role === 'user' ?  
           <UserHeader user={data.user.email} /> 
           : 
@@ -28,6 +29,7 @@ export const Header: React.FC = () => {
         }
         <Outlet/>
       </div>
+      <SocialFooter />
     </div>
   ) 
 }

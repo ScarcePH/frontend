@@ -7,6 +7,7 @@ import { CheckoutHeader } from "../components/CheckoutHeader"
 import { CustomerDetailsForm } from "../components/CustomerDetailsForm"
 import { OrderSummary } from "../components/OrderSummary"
 import { DEFAULT_FORM_DATA, type CheckoutFormErrors, type FormDataState } from "../components/types"
+import { SocialFooter } from "@/features/public/components/SocialFooter"
 
 const POLL_INTERVAL_MS = 2000
 const MAX_POLL_ATTEMPTS = 12
@@ -153,27 +154,30 @@ function CheckoutPage() {
   }
 
   return (
-    <div className="mx-auto w-full max-w-6xl px-3 md:px-6 py-6 md:py-10 space-y-6">
-      <CheckoutHeader onBack={() => navigate(-1)} />
+    <div className="flex min-h-dvh flex-col bg-background">
+      <div className="mx-auto w-full max-w-6xl flex-1 space-y-6 px-3 py-6 md:px-6 md:py-10">
+        <CheckoutHeader onBack={() => navigate(-1)} />
 
-      <div className="grid gap-6 lg:grid-cols-[1.3fr_0.9fr]">
-        <CustomerDetailsForm
-          formData={formData}
-          errors={errors}
-          fileName={file?.name}
-          onChange={updateFormField}
-          onFileChange={handleFileChange}
-          onSubmit={handleSubmit}
-          canSubmit={canSubmit}
-          isSubmitting={isSubmitting}
-        />
-        <OrderSummary
-          isLoading={checkoutSession.isLoading}
-          hasSessionId={!!checkoutSessionId}
-          sessionItems={sessionItems}
-          sessionTotal={sessionTotal}
-        />
+        <div className="grid gap-6 lg:grid-cols-[1.3fr_0.9fr]">
+          <CustomerDetailsForm
+            formData={formData}
+            errors={errors}
+            fileName={file?.name}
+            onChange={updateFormField}
+            onFileChange={handleFileChange}
+            onSubmit={handleSubmit}
+            canSubmit={canSubmit}
+            isSubmitting={isSubmitting}
+          />
+          <OrderSummary
+            isLoading={checkoutSession.isLoading}
+            hasSessionId={!!checkoutSessionId}
+            sessionItems={sessionItems}
+            sessionTotal={sessionTotal}
+          />
+        </div>
       </div>
+      <SocialFooter />
     </div>
   )
 }
