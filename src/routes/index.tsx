@@ -10,6 +10,7 @@ import AdminLayout from '@/features/admin/AdminLayout';
 import { PairList } from '@/features/public/pages/PairList';
 import CheckoutPage from '@/features/checkout/pages/CheckoutPage';
 import ResetPassword from '@/features/auth/pages/ResetPassword';
+import { PrivacyPolicy } from '@/features/public/pages/PrivacyPolicy';
 
 const PageNotFound = lazy(()=> import('@/features/admin/pages/notfound'));
 
@@ -23,6 +24,7 @@ export default function AppRoute() {
       </Route>
       <Route path="/checkout" element={<CheckoutPage />} />
       <Route path="/reset-password" element={<ResetPassword />} />
+      <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
 
       
