@@ -9,9 +9,9 @@ import type { OrderSummaryProps } from "./types"
 function OrderSummaryItem({ item }: { item: CheckoutSessionItem }) {
   const firstVariation = item.inventory?.variations?.[0]
   return (
-    <Item variant="outline" size="sm">
+    <Item variant="outline" size="sm" className="rounded-none border-border p-3">
       {item.inventory?.image ? (
-        <img src={item.inventory.image} alt={item.inventory?.name ?? "Item image"} className="h-20 w-20 rounded-sm bg-muted object-contain" />
+        <img src={item.inventory.image} alt={item.inventory?.name ?? "Item image"} className="h-20 w-20 border border-border bg-muted object-contain" />
       ) : null}
       <ItemHeader>
         <ItemTitle className="capitalize">{item.inventory?.name ?? "Item"}</ItemTitle>
@@ -31,12 +31,12 @@ export function OrderSummary({ isLoading, hasSessionId, sessionItems, sessionTot
   const hasItems = sessionItems.length > 0
 
   return (
-    <Card className="lg:sticky lg:top-6 lg:self-start">
-      <CardHeader className="border-b">
-        <CardTitle>Order Summary</CardTitle>
+    <Card className="rounded-none border-border shadow-none lg:sticky lg:top-6 lg:self-start">
+      <CardHeader className="border-b border-border px-5 py-6 sm:px-7">
+        <CardTitle className="text-xl">Order summary</CardTitle>
         <CardDescription>Review your items and totals.</CardDescription>
       </CardHeader>
-      <CardContent className="space-y-4 pt-6">
+      <CardContent className="space-y-5 px-5 pt-6 sm:px-7">
         {isLoading ? (
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <Spinner />
@@ -67,13 +67,13 @@ export function OrderSummary({ isLoading, hasSessionId, sessionItems, sessionTot
             <span>Shipping</span>
             <span>Calculated after verification</span>
           </div>
-          <div className="flex items-center justify-between font-medium">
+          <div className="flex items-center justify-between border-t border-border pt-4 text-lg font-semibold">
             <span>Total</span>
             <span>{formatPeso(sessionTotal)}</span>
           </div>
         </div>
       </CardContent>
-      <CardFooter className="border-t">
+      <CardFooter className="border-t border-border px-5 py-5 sm:px-7">
         <div className="text-xs text-muted-foreground">
           By submitting, you agree to our payment verification process.
         </div>

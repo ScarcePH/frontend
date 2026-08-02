@@ -49,9 +49,10 @@ export default function AuthForm({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="flex w-full max-w-[calc(100%-2rem)] flex-col sm:max-w-[420px]">
+      <DialogContent className="storefront flex w-full max-w-[calc(100%-2rem)] flex-col rounded-none border-border bg-background p-6 sm:max-w-[440px] sm:p-8">
         <div className="space-y-1">
-          <DialogTitle className="text-xl">{title}</DialogTitle>
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-store-accent">Scarce account</p>
+          <DialogTitle className="pt-2 text-2xl font-semibold tracking-[-0.03em]">{title}</DialogTitle>
           <p className="text-sm text-muted-foreground">Use your Scarce account to continue shopping.</p>
         </div>
 
@@ -63,13 +64,15 @@ export default function AuthForm({
 
             <FieldGroup>
               <Field>
-                <FieldLabel>Email</FieldLabel>
+                <FieldLabel htmlFor="auth-email">Email</FieldLabel>
                 <Input
+                  id="auth-email"
                   type="email"
                   autoComplete="email"
                   required
                   placeholder="ScarcePH@gmail.com"
                   value={data.email}
+                  className="min-h-12 rounded-none"
                   onChange={(e) =>
                     setData({ ...data, email: e.target.value })
                   }
@@ -77,15 +80,16 @@ export default function AuthForm({
               </Field>
 
               <Field>
-                <FieldLabel>Password</FieldLabel>
+                <FieldLabel htmlFor="auth-password">Password</FieldLabel>
                 <div className="relative">
                   <Input
+                    id="auth-password"
                     type={showPassword ? "text" : "password"}
                     autoComplete={title === "Login" ? "current-password" : "new-password"}
                     required
                     placeholder="Password"
                     value={data.password}
-                    className="pr-10"
+                    className="min-h-12 rounded-none pr-12"
                     onChange={(e) =>
                       setData({ ...data, password: e.target.value })
                     }
@@ -93,8 +97,8 @@ export default function AuthForm({
                   <Button
                     type="button"
                     variant="ghost"
-                    size="icon-xs"
-                    className="absolute right-1 top-1/2 -translate-y-1/2"
+                    size="icon"
+                    className="absolute right-0 top-1/2 size-11 -translate-y-1/2 rounded-none"
                     aria-label={showPassword ? "Hide password" : "Show password"}
                     onClick={() => setShowPassword((value) => !value)}
                   >
@@ -124,7 +128,7 @@ export default function AuthForm({
             <Button
               type="submit"
               size="lg"
-              className="w-full"
+              className="min-h-12 w-full rounded-none uppercase tracking-[0.13em]"
               disabled={isPending || !data.email || !data.password}
             >
               {isPending ? <Spinner /> : submitLabel}

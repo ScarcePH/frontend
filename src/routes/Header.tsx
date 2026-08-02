@@ -19,7 +19,7 @@ export const Header: React.FC = () => {
   }
 
   return  (
-    <div className="flex min-h-dvh flex-col bg-background">
+    <div className="storefront flex min-h-dvh flex-col bg-background">
       <div className="w-full flex-1">
         { data?.user?.role === 'user' ?  
           <UserHeader user={data.user.email} /> 

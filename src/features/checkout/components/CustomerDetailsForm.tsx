@@ -21,29 +21,32 @@ export function CustomerDetailsForm({
   isSubmitting,
 }: CustomerDetailsFormProps) {
   return (
-    <Card>
-      <CardHeader className="border-b">
-        <CardTitle>Customer Details</CardTitle>
-        <CardDescription>Please enter your information and upload proof of payment.</CardDescription>
+    <Card className="rounded-none border-border shadow-none">
+      <CardHeader className="border-b border-border px-5 py-6 sm:px-7">
+        <CardTitle className="text-xl">Delivery details</CardTitle>
+        <CardDescription>Tell us where to send your pair and how to reach you.</CardDescription>
       </CardHeader>
       <form onSubmit={onSubmit}>
-        <CardContent className="space-y-6 pt-6">
+        <CardContent className="space-y-7 px-5 pt-7 sm:px-7">
           <FieldSet>
             <FieldGroup>
               <Field>
-                <FieldLabel>Full name</FieldLabel>
+                <FieldLabel htmlFor="checkout-fullName">Full name</FieldLabel>
                 <Input
+                  id="checkout-fullName"
                   required
                   placeholder="Juan Dela Cruz"
                   value={formData.fullName}
                   aria-invalid={!!errors.fullName}
                   onChange={(e) => onChange("fullName", e.target.value)}
+                  className="min-h-12 rounded-none"
                 />
                 <FieldError>{errors.fullName}</FieldError>
               </Field>
               <Field>
-                <FieldLabel>Email</FieldLabel>
+                <FieldLabel htmlFor="checkout-email">Email</FieldLabel>
                 <Input
+                  id="checkout-email"
                   type="email"
                   autoComplete="email"
                   required
@@ -51,12 +54,14 @@ export function CustomerDetailsForm({
                   value={formData.email}
                   aria-invalid={!!errors.email}
                   onChange={(e) => onChange("email", e.target.value)}
+                  className="min-h-12 rounded-none"
                 />
                 <FieldError>{errors.email}</FieldError>
               </Field>
               <Field>
-                <FieldLabel>Phone number</FieldLabel>
+                <FieldLabel htmlFor="checkout-phone">Phone number</FieldLabel>
                 <Input
+                  id="checkout-phone"
                   type="tel"
                   autoComplete="tel"
                   required
@@ -64,6 +69,7 @@ export function CustomerDetailsForm({
                   value={formData.phone}
                   aria-invalid={!!errors.phone}
                   onChange={(e) => onChange("phone", e.target.value)}
+                  className="min-h-12 rounded-none"
                 />
                 <FieldError>{errors.phone}</FieldError>
               </Field>
@@ -75,11 +81,12 @@ export function CustomerDetailsForm({
           <FieldSet>
             <FieldGroup>
               <Field>
-                <FieldLabel>Delivery address</FieldLabel>
+                <FieldLabel htmlFor="checkout-address">Delivery address</FieldLabel>
                 <Textarea
+                  id="checkout-address"
                   required
                   placeholder="Street, Barangay, City, Post code"
-                  className="min-h-[96px]"
+                  className="min-h-28 rounded-none"
                   value={formData.address}
                   aria-invalid={!!errors.address}
                   onChange={(e) => onChange("address", e.target.value)}
@@ -92,16 +99,17 @@ export function CustomerDetailsForm({
           <FieldSet>
             <FieldGroup>
               <Field>
-                <FieldLabel>Payment Method</FieldLabel>
+                <FieldLabel className="text-base font-semibold">Pay by QR</FieldLabel>
                 <FieldDescription>
                   Send your payment using the QR code below, then upload a clear screenshot. Payments are manually verified before fulfillment.
                 </FieldDescription>
-                <div className="flex justify-center rounded-md border bg-muted/30 py-4">
+                <div className="grid gap-5 border border-border bg-muted/40 p-5 sm:grid-cols-[12rem_1fr] sm:items-center">
                   <img
-                    className="h-auto w-48 rounded-sm object-contain"
+                    className="mx-auto h-auto w-48 border border-border bg-white object-contain"
                     src="/image/PAYMENT_QR.PNG"
                     alt="Payment QR code"
                   />
+                  <div><p className="font-semibold">Scan, pay, then upload.</p><ol className="mt-3 list-decimal space-y-2 pl-4 text-sm leading-6 text-muted-foreground"><li>Scan the QR code using your payment app.</li><li>Complete payment for the order total.</li><li>Save a clear screenshot with the reference and amount visible.</li></ol></div>
                 </div>
               </Field>
             </FieldGroup>
@@ -113,13 +121,15 @@ export function CustomerDetailsForm({
           <FieldSet>
             <FieldGroup>
               <Field>
-                <FieldLabel>Upload a screenshot of your payment as proof of payment</FieldLabel>
+                <FieldLabel htmlFor="checkout-proof">Payment proof</FieldLabel>
                 <Input
+                  id="checkout-proof"
                   type="file"
                   required
                   accept="image/jpeg,image/png"
                   aria-invalid={!!errors.proof}
                   onChange={(e) => onFileChange(e.target.files?.[0] ?? null)}
+                  className="min-h-12 cursor-pointer rounded-none file:mr-3 file:border-0 file:bg-transparent file:font-semibold"
                 />
                 <p className="mb-2 mt-2 text-xs text-muted-foreground">{FILE_HELPER_TEXT}</p>
                 {fileName ? <p className="text-xs font-medium">Selected: {fileName}</p> : null}
@@ -128,9 +138,9 @@ export function CustomerDetailsForm({
             </FieldGroup>
           </FieldSet>
         </CardContent>
-        <CardFooter className="border-t">
-          <Button size="lg" className="w-full" type="submit" disabled={!canSubmit}>
-            {isSubmitting ? <Spinner /> : "Submit checkout"}
+        <CardFooter className="border-t border-border px-5 py-5 sm:px-7">
+          <Button size="lg" className="min-h-12 w-full rounded-none uppercase tracking-[0.13em]" type="submit" disabled={!canSubmit}>
+            {isSubmitting ? <><Spinner /> Verifying payment…</> : "Submit for verification"}
           </Button>
         </CardFooter>
       </form>

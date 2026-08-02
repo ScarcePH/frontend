@@ -19,7 +19,7 @@ export default function AuthModal() {
 
     return(
         <div>
-            <Button size='sm' variant='outline' onClick={()=>setOpen(!open)}> 
+            <Button className="min-h-11 rounded-none border-foreground/35 bg-transparent px-4 text-xs uppercase tracking-[0.14em]" variant='outline' onClick={()=>setOpen(!open)}>
                 Login
             </Button>
         {
