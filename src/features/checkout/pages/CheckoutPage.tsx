@@ -105,6 +105,8 @@ function CheckoutPage() {
     if (proofError) nextErrors.proof = proofError
 
     setErrors(nextErrors)
+    const firstError = Object.keys(nextErrors)[0]
+    if (firstError) window.requestAnimationFrame(() => document.getElementById(`checkout-${firstError}`)?.focus())
     return Object.keys(nextErrors).length === 0
   }
 
@@ -154,11 +156,11 @@ function CheckoutPage() {
   }
 
   return (
-    <div className="flex min-h-dvh flex-col bg-background">
-      <div className="mx-auto w-full max-w-6xl flex-1 space-y-6 px-3 py-6 md:px-6 md:py-10">
+    <div className="storefront flex min-h-dvh flex-col bg-background">
+      <div className="mx-auto w-full max-w-7xl flex-1 space-y-8 px-4 py-6 sm:px-8 md:py-10 lg:px-12">
         <CheckoutHeader onBack={() => navigate(-1)} />
 
-        <div className="grid gap-6 lg:grid-cols-[1.3fr_0.9fr]">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1.15fr)_minmax(20rem,0.85fr)] lg:gap-10">
           <CustomerDetailsForm
             formData={formData}
             errors={errors}
