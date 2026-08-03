@@ -19,8 +19,8 @@ export function SocialFooter() {
     <footer className="border-t border-border bg-background">
       <div className="mx-auto grid w-full max-w-[90rem] gap-10 px-4 py-12 sm:px-8 md:grid-cols-[1fr_auto] md:items-end lg:px-12 lg:py-16 xl:px-16">
         <div>
-          <p className="text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">Rare pairs. Clear choices.</p>
-          <p className="mt-3 max-w-md text-sm leading-6 text-muted-foreground">Curated sneakers, transparent size-specific condition, and support from selection through verification.</p>
+          <p className="text-3xl font-semibold tracking-[-0.04em] sm:text-4xl">From the pairs I return to, toward what comes next.</p>
+          <p className="mt-3 max-w-xl text-sm leading-6 text-muted-foreground">Scarce is a collector-led home for discontinued, hard-to-find sneakers—rooted in Janoskis and making room for a selective basketball rotation.</p>
         </div>
         <nav aria-label="Social links" className="flex flex-wrap gap-x-5 gap-y-3">
           {socialLinks.map(({ label, href, Icon, external }) => (

@@ -20,7 +20,7 @@ function OrderSummaryItem({ item }: { item: CheckoutSessionItem }) {
       <ItemContent className="text-muted-foreground">
         <div className="flex items-center justify-between text-xs">
           <span>{firstVariation?.condition ?? "-"}</span>
-          <span>{firstVariation?.price ? formatPeso(firstVariation.price * item.qty) : "-"}</span>
+          <span>{item.price ? formatPeso(item.price * item.qty) : "-"}</span>
         </div>
       </ItemContent>
     </Item>

@@ -2,6 +2,7 @@ import { toast } from "sonner";
 import api from "./setup";
 import type { AddShipmentParams, UpdateOrderParams, VariationParams } from "@/features/admin/types/api";
 import type { CustomerObj } from "@/features/admin/types/customer";
+import type { ProductCategory } from "@/types/category";
 
 async function 
 LoginAPI(email: string, password: string) {
@@ -55,11 +56,12 @@ async function GetAllInventory(){
     }
 }
 
-async function CreatePair(name:string, description:string, file: File|null){
+async function CreatePair(name:string, description:string, category:ProductCategory, file: File|null){
     const formData = new FormData()
     formData.append("file", file as Blob) 
     formData.append("name", name)
     formData.append("description", description)
+    formData.append("category", category)
     try {
         const response = await api.post('/inventory/create', formData,{
             headers: {

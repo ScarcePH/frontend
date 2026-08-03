@@ -104,7 +104,8 @@ function InventoryItem({inv}:InventoryItemProps){
                         name: inv.name,
                         image: inv.image,
                         variation: inv.variations,
-                        description: inv.description
+                        description: inv.description,
+                        category: inv.category
 
                     }}
                 />

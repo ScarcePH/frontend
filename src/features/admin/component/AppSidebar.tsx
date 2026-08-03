@@ -5,6 +5,7 @@ import {
   SettingsIcon,
   ChevronDown,
   LogOut,
+  Tag,
 } from "lucide-react"
 
 import {
@@ -47,6 +48,11 @@ const items = [
     title: "Pairs",
     url: "/admin/pairs",
     icon: Footprints,
+  },
+  {
+    title: "Promotions",
+    url: "/admin/promotions",
+    icon: Tag,
   },
 ]
 

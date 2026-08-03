@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
-import { getProductCatalog } from '../api'
+import { getActivePromotion, getProductCatalog } from '../api'
 import type { PairObj } from '@/types/pair'
 import { sortCatalogPairs } from '../utils/catalog'
 
@@ -11,3 +11,8 @@ export const useGetPairs = () => {
         select: sortCatalogPairs
     })
 }
+
+export const useActivePromotion = () => useQuery({
+  queryKey: ['active-promotion'],
+  queryFn: getActivePromotion,
+})

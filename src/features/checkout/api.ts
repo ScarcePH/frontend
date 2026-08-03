@@ -20,6 +20,9 @@ export function startCheckout(payload: StartCheckoutPayload) {
 
 export type CheckoutSessionItem = {
   qty: number
+  price: number
+  regular_price?: number
+  promotion_id?: number | null
   inventory: {
     id: number
     name: string

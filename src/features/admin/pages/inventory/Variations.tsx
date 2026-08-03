@@ -3,7 +3,7 @@ import { Edit2Icon, PlusCircleIcon } from "lucide-react"
 import { AnimatePresence } from "framer-motion"
 import { VariationItem } from "./VariationItem"
 import type { VariationsProps } from "@/features/admin/types/variations"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useVariations } from "../../hooks/useVariations"
 import CarouselWithFullScreen from "@/components/CarouselWithFullScreen"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
@@ -11,27 +11,25 @@ import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { useEditPair } from "../../hooks/useInventory"
 import { toast } from "sonner"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 
 
 export function Variations({pair}: VariationsProps){
     const { vars, add, remove, toggle, update, submitVariation, addVariations, buildVariationPayload} = useVariations()
-    const [carousel, setCarousel] = useState<string[]>([pair.image])
-
-    const [editPair, setEditPair] = useState({name:pair.name, description:pair.description})
+    const [editPair, setEditPair] = useState({name:pair.name, description:pair.description, category:pair.category})
     const {mutate: requestEditPair, isPending} = useEditPair()
     
     useEffect(()=>{
         addVariations(pair.variation)
     },[pair])
 
-    useEffect(()=>{
-        const openedVar = vars.filter((data)=>data.isOpen)
-        if(openedVar.length){
-            openedVar[0].image?.length && setCarousel([pair.image, ...openedVar[0].image])
-        }
-       
-    },[vars])
+    const carousel = useMemo(() => {
+        const openedVar = vars.find((data) => data.isOpen)
+        return openedVar?.image?.length
+            ? [pair.image, ...openedVar.image]
+            : [pair.image]
+    }, [pair.image, vars])
 
     const handleConfirm = () => {
         const variations = buildVariationPayload(vars)
@@ -114,6 +112,18 @@ export function Variations({pair}: VariationsProps){
                     value={editPair.description}
                     onChange={(e)=>setEditPair({...editPair, description:e.target.value})}
                 />
+                <Select
+                    value={editPair.category}
+                    onValueChange={(category: typeof editPair.category) => setEditPair({...editPair, category})}
+                >
+                    <SelectTrigger className="w-full">
+                        <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="janoski">Janoski</SelectItem>
+                        <SelectItem value="basketball">Basketball</SelectItem>
+                    </SelectContent>
+                </Select>
                 <Button onClick={handleEditPair} disabled={isPending}>
                     Confirm
                 </Button>

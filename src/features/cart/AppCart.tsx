@@ -79,7 +79,8 @@ export function AppCart() {
                   <div className="min-w-0 self-center">
                     <p className="font-semibold leading-5">{item.inventory_name}</p>
                     <p className="mt-1.5 text-xs leading-5 text-muted-foreground">US {item.size || 'N/A'} · {item.condition || 'Condition unavailable'}</p>
-                    <p className="mt-2 text-sm font-semibold tabular-nums">{formatPeso(item.price || 0)}</p>
+                    {item.is_on_promotion ? <p className="mt-2 text-xs tabular-nums text-muted-foreground line-through">{formatPeso(item.regular_price)}</p> : null}
+                    <p className={`text-sm font-semibold tabular-nums ${item.is_on_promotion ? 'text-store-accent' : 'mt-2'}`}>{formatPeso(item.price || 0)}</p>
                   </div>
                   <Button size="icon" variant="ghost" className="size-11 self-center rounded-none text-muted-foreground hover:text-destructive" aria-label={`Remove ${item.inventory_name} from cart`} onClick={() => handleRemove(index, item.inventory_id, item.variation_id)} disabled={removeFromCart.isPending && removingIndex === index}>
                     {removeFromCart.isPending && removingIndex === index ? <Spinner /> : <Trash2 aria-hidden="true" />}
