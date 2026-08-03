@@ -19,6 +19,18 @@ export const DEFAULT_CATALOG_FILTERS: CatalogFilterState = {
   sort: 'default',
 }
 
+const NEW_PAIR_WINDOW_MS = 72 * 60 * 60 * 1000
+
+export function isNewPair(pair: PairObj, now = Date.now()) {
+  if (!pair.created_at) return false
+
+  const createdAt = Date.parse(pair.created_at)
+  if (Number.isNaN(createdAt)) return false
+
+  const age = now - createdAt
+  return age >= 0 && age < NEW_PAIR_WINDOW_MS
+}
+
 export function isAvailableVariation(variation: VariationObj) {
   const status = variation.status?.toLowerCase() ?? ''
   return variation.stock > 0 && !['sold', 'unavailable', 'inactive'].includes(status)
@@ -34,15 +46,32 @@ export function isSoldPair(pair: PairObj) {
 export function getPairAvailability(pair: PairObj) {
   const availableVariations = pair.variations.filter(isAvailableVariation)
   const displayVariations = availableVariations.length ? availableVariations : pair.variations
-  const prices = displayVariations.map((variation) => variation.price).filter((price) => price > 0)
+  const prices = displayVariations.map((variation) => variation.effective_price ?? variation.price).filter((price) => price > 0)
+  const promotedVariations = availableVariations.filter((variation) => variation.is_on_promotion)
+  const startingPrice = prices.length ? Math.min(...prices) : null
+  const startingVariation = displayVariations.find(
+    (variation) => (variation.effective_price ?? variation.price) === startingPrice,
+  )
 
   return {
     isSold: isSoldPair(pair),
     isSoldOut: availableVariations.length === 0,
     availableVariations,
     sizeCount: new Set(availableVariations.map((variation) => variation.size)).size,
-    startingPrice: prices.length ? Math.min(...prices) : null,
+    startingPrice,
+    startingRegularPrice: startingVariation?.is_on_promotion ? startingVariation.price : null,
+    isOnPromotion: promotedVariations.length > 0,
   }
+}
+
+export function getPromotedCatalogPairs(pairs: PairObj[], filters: CatalogFilterState) {
+  if (filters.availability === 'sold') return []
+  return pairs.filter((pair) => pair.variations.some((variation) => (
+    variation.is_on_promotion
+    && isAvailableVariation(variation)
+    && (!filters.size || variation.size === filters.size)
+    && (!filters.condition || variation.condition === filters.condition)
+  )))
 }
 
 export function deriveCatalogOptions(pairs: PairObj[]) {

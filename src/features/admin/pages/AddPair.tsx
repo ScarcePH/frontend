@@ -29,6 +29,7 @@ export function AddPair() {
     name: "",
     description: "",
     image: "",
+    category: "janoski",
     file: null
   })
 
@@ -40,6 +41,7 @@ export function AddPair() {
     return CreatePair(
       payload.name,
       payload.description,
+      payload.category,
       payload.file
     )
   }
@@ -94,7 +96,8 @@ export function AddPair() {
               name: inventory.name,
               image: inventory.image,
               variation:[createVariation()],
-              description:inventory.description
+              description:inventory.description,
+              category: inventory.category
             }}
           />
         )}

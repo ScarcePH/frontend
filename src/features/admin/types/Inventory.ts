@@ -1,4 +1,5 @@
 import { type VariationObj  } from "./variations";
+import type { ProductCategory } from "@/types/category";
 
 export interface InventoryObj {
     name:string,
@@ -6,4 +7,5 @@ export interface InventoryObj {
     image:string
     variations: VariationObj[];
     id:number
+    category: ProductCategory
 }

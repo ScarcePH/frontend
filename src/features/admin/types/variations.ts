@@ -1,3 +1,5 @@
+import type { ProductCategory } from '@/types/category'
+
 export interface VariationObj {
   id: number
   image: []
@@ -32,6 +34,7 @@ type PairSummary = {
   image: string,
   variation:VariationObj[]
   description:string
+  category: ProductCategory
 }
 
 export type VariationsProps = {
@@ -44,6 +47,6 @@ export type InventoryData = {
   name: string
   description: string
   image: string,
+  category: ProductCategory
   file:File|null
 }
-

@@ -24,7 +24,7 @@ function getErrorMessage(error: unknown, fallback: string) {
 export default function PairInfo({ pair, mode = 'page' }: PairProps) {
   const [selected, setSelected] = useState<VariationObj | null>(null)
   const selectedValue = selected ? String(selected.id) : ''
-  const { availableVariations, sizeCount, startingPrice } = getPairAvailability(pair)
+  const { availableVariations, sizeCount, startingPrice, startingRegularPrice } = getPairAvailability(pair)
   const hasAvailableVariations = availableVariations.length > 0
   const carousel = useMemo(() => {
     if (!selected?.image?.length) return [pair.image]
@@ -93,9 +93,16 @@ export default function PairInfo({ pair, mode = 'page' }: PairProps) {
         <div className="mt-7 border-y border-border py-5">
           <div className="flex items-baseline justify-between gap-4">
             <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-muted-foreground">Price</p>
-            <p className="text-2xl font-semibold tabular-nums">
-              {selected ? formatPeso(selected.price) : startingPrice ? `From ${formatPeso(startingPrice)}` : 'Sold out'}
-            </p>
+            <div className="text-right">
+              {(selected?.is_on_promotion || (!selected && startingRegularPrice)) ? (
+                <p className="text-sm tabular-nums text-muted-foreground line-through">
+                  {formatPeso(selected?.price ?? startingRegularPrice ?? 0)}
+                </p>
+              ) : null}
+              <p className={`text-2xl font-semibold tabular-nums ${selected?.is_on_promotion ? 'text-store-accent' : ''}`}>
+                {selected ? formatPeso(selected.effective_price ?? selected.price) : startingPrice ? `From ${formatPeso(startingPrice)}` : 'Sold out'}
+              </p>
+            </div>
           </div>
           <div className="mt-3 flex items-center justify-between gap-4 text-xs">
             <span className="uppercase tracking-[0.14em] text-muted-foreground">Availability</span>

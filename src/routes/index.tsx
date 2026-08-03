@@ -12,6 +12,7 @@ import CheckoutPage from '@/features/checkout/pages/CheckoutPage';
 import ResetPassword from '@/features/auth/pages/ResetPassword';
 import { PrivacyPolicy } from '@/features/public/pages/PrivacyPolicy';
 import { PairDetails } from '@/features/public/pages/PairDetails';
+import Promotions from '@/features/admin/pages/promotions/Promotions';
 
 const PageNotFound = lazy(()=> import('@/features/admin/pages/notfound'));
 
@@ -36,6 +37,7 @@ export default function AppRoute() {
           <Route path="dashboard" element={<Dashboard />} />
           <Route path="orders" element={<OrderPage />} />
           <Route path="pairs" element={<Inventory />} />
+          <Route path="promotions" element={<Promotions />} />
           <Route path="settings/change-password" element={<ChangePass />} />
         </Route>
       </Route>

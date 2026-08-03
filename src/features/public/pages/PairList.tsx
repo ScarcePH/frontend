@@ -1,23 +1,24 @@
 import { useMemo, type ReactNode } from 'react'
 import { useSearchParams } from 'react-router'
-import { ArrowRight, Filter, RefreshCw, Search, ShieldCheck, Sparkles, X } from 'lucide-react'
+import { ArrowRight, Filter, RefreshCw, Search, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet'
 import { Skeleton } from '@/components/ui/skeleton'
 import { PairCard } from '../components/PairCard'
-import { useGetPairs } from '../hooks/usePairs'
+import { useActivePromotion, useGetPairs } from '../hooks/usePairs'
 import {
   DEFAULT_CATALOG_FILTERS,
   catalogFiltersFromSearchParams,
   catalogFiltersToSearchParams,
   deriveCatalogOptions,
   filterAndSortCatalog,
+  getPromotedCatalogPairs,
   type CatalogFilterState,
 } from '../utils/catalog'
 
-const skeletonCards = Array.from({ length: 8 }, (_, index) => index)
+const skeletonCards = Array.from({ length: 5 }, (_, index) => index)
 const ALL_VALUE = '__all__'
 
 type FilterControlsProps = {
@@ -104,11 +105,15 @@ function SortControl({ filters, onChange, showLabel = false }: Pick<FilterContro
 
 export function PairList() {
   const { data: pairs = [], isLoading, isError, isFetching, refetch } = useGetPairs()
+  const activePromotion = useActivePromotion()
   const [searchParams, setSearchParams] = useSearchParams()
   const filters = useMemo(() => catalogFiltersFromSearchParams(searchParams), [searchParams])
   const options = useMemo(() => deriveCatalogOptions(pairs), [pairs])
   const results = useMemo(() => filterAndSortCatalog(pairs, filters), [pairs, filters])
-  const heroPair = pairs.find((pair) => pair.image)
+  const janoskis = useMemo(() => results.filter((pair) => pair.category === 'janoski'), [results])
+  const basketball = useMemo(() => results.filter((pair) => pair.category === 'basketball'), [results])
+  const promotedPairs = useMemo(() => getPromotedCatalogPairs(results, filters), [results, filters])
+  const promotion = activePromotion.data?.promotion
 
   const updateFilter = <K extends keyof CatalogFilterState>(key: K, value: CatalogFilterState[K]) => {
     setSearchParams(catalogFiltersToSearchParams({ ...filters, [key]: value }), { replace: true })
@@ -125,27 +130,35 @@ export function PairList() {
 
   return (
     <main id="main-content" className="mx-auto w-full max-w-[90rem] px-4 pb-20 sm:px-8 lg:px-12 xl:px-16">
-      <section className="grid items-center gap-8 border-b border-border py-10 sm:py-14 lg:grid-cols-[1fr_0.85fr] lg:py-16">
-        <div className="max-w-2xl">
-          <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-store-accent">Curated in the Philippines</p>
-          <h1 className="text-4xl font-semibold leading-[1.04] tracking-[-0.045em] sm:text-6xl lg:text-7xl">Find your next<br />rare pair.</h1>
-          <p className="mt-5 max-w-xl text-base leading-7 text-muted-foreground sm:text-lg">Distinct sneakers, clear condition details, and live size availability—ready when you are.</p>
-          <Button asChild className="mt-7 min-h-12 rounded-none px-7 uppercase tracking-[0.14em]">
-            <a href="#shop">Shop the collection <ArrowRight aria-hidden="true" /></a>
-          </Button>
-          <div className="mt-8 grid gap-3 text-sm text-muted-foreground sm:grid-cols-3">
-            <span className="flex items-center gap-2"><ShieldCheck className="size-4 text-foreground" /> Verified details</span>
-            <span className="flex items-center gap-2"><Sparkles className="size-4 text-foreground" /> Curated pairs</span>
-            <span className="flex items-center gap-2"><RefreshCw className="size-4 text-foreground" /> Live availability</span>
+      <section id="story" aria-labelledby="story-heading" className="scroll-mt-20 border-b border-border py-10 sm:py-14">
+        <div className="grid gap-7 lg:grid-cols-[0.65fr_1.35fr] lg:gap-12">
+          <div>
+            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-store-accent">Our story</p>
+            <h2 id="story-heading" className="max-w-sm text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">One pair became a point of view.</h2>
           </div>
-        </div>
-        <div className="relative hidden aspect-[4/3] overflow-hidden bg-muted lg:block">
-          {heroPair ? <img src={heroPair.image} alt="" className="h-full w-full object-contain p-10" /> : <div className="h-full bg-[linear-gradient(135deg,var(--muted),var(--background))]" />}
-          <span className="absolute bottom-4 left-4 bg-background px-3 py-2 text-[0.6875rem] font-semibold uppercase tracking-[0.16em]">New rotation online</span>
+          <div className="grid border-t border-border sm:grid-cols-3 sm:border-l sm:border-t-0">
+            <article className="border-b border-border py-6 sm:border-b-0 sm:border-r sm:px-6 sm:py-1">
+              <p className="text-xs font-semibold tabular-nums text-muted-foreground">01</p>
+              <h3 className="mt-4 text-lg font-semibold tracking-[-0.02em]">The pair I return to</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">Janoskis are where my own collecting story keeps returning—and the pair that gave Scarce its focus.</p>
+            </article>
+            <article className="border-b border-border py-6 sm:border-b-0 sm:border-r sm:px-6 sm:py-1">
+              <p className="text-xs font-semibold tabular-nums text-muted-foreground">02</p>
+              <h3 className="mt-4 text-lg font-semibold tracking-[-0.02em]">What sold still matters</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">Discontinued finds do not disappear from the story. The sold archive keeps a record of the pairs that shaped Scarce.</p>
+              <a href="/?availability=sold&q=janoski#shop" className="storefront-focus mt-4 inline-flex min-h-11 items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] hover:text-store-accent">View the archive <ArrowRight className="size-3.5" aria-hidden="true" /></a>
+            </article>
+            <article className="py-6 sm:px-6 sm:py-1">
+              <p className="text-xs font-semibold tabular-nums text-muted-foreground">03</p>
+              <h3 className="mt-4 text-lg font-semibold tracking-[-0.02em]">A wider rotation</h3>
+              <p className="mt-3 text-sm leading-6 text-muted-foreground">Basketball pairs are entering gradually, chosen with the same selective eye for what deserves another look.</p>
+              <a href="#shop" className="storefront-focus mt-4 inline-flex min-h-11 items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] hover:text-store-accent">See the current collection <ArrowRight className="size-3.5" aria-hidden="true" /></a>
+            </article>
+          </div>
         </div>
       </section>
 
-      <section id="shop" aria-labelledby="catalog-heading" className="scroll-mt-28 pt-10 sm:pt-14">
+      <section id="shop" aria-labelledby="catalog-heading" className="scroll-mt-20 pt-10 sm:pt-14">
         <div className="flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-muted-foreground">Shop</p>
@@ -154,7 +167,7 @@ export function PairList() {
           <p className="text-sm text-muted-foreground" aria-live="polite">{isLoading ? 'Loading products' : `${results.length} ${results.length === 1 ? 'result' : 'results'}`}</p>
         </div>
 
-        <div className="mt-7 grid gap-3 border-y border-border py-4 lg:grid-cols-[minmax(14rem,1fr)_minmax(9rem,0.65fr)_minmax(7rem,0.45fr)_minmax(9.5rem,0.7fr)_minmax(11.5rem,0.8fr)] lg:items-center">
+        <div className="mt-6 grid gap-3 border-b border-border pb-4 lg:grid-cols-[minmax(14rem,1fr)_minmax(9rem,0.65fr)_minmax(7rem,0.45fr)_minmax(9.5rem,0.7fr)_minmax(11.5rem,0.8fr)] lg:items-center">
           <label className="relative block">
             <span className="sr-only">Search products</span>
             <Search className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
@@ -191,13 +204,56 @@ export function PairList() {
         ) : null}
 
         {isLoading ? (
-          <div className="mt-8 grid grid-cols-2 gap-x-3 gap-y-10 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4" aria-label="Loading products">
-            {skeletonCards.map((item) => <div key={item}><Skeleton className="aspect-square w-full rounded-none" /><Skeleton className="mt-4 h-4 w-4/5 rounded-none" /><Skeleton className="mt-3 h-4 w-1/2 rounded-none" /></div>)}
+          <div className="mt-10 space-y-14 sm:space-y-16" aria-label="Loading products">
+            {['Janoskis', 'Basketball'].map((category) => (
+              <section key={category} aria-hidden="true">
+                <div className="mb-5 flex items-center gap-4"><Skeleton className="h-6 w-24 rounded-none" /><div className="h-px flex-1 bg-border" /></div>
+                <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:grid-cols-3 md:gap-x-7 lg:grid-cols-5 lg:gap-x-8 lg:gap-y-14">
+                  {skeletonCards.map((item) => <div key={item}><Skeleton className="aspect-square w-full rounded-none bg-muted/60" /><Skeleton className="mt-3 h-4 w-4/5 rounded-none" /><Skeleton className="mt-2 h-4 w-1/2 rounded-none" /></div>)}
+                </div>
+              </section>
+            ))}
           </div>
         ) : isError ? (
           <div className="mt-8 flex min-h-72 items-center justify-center border border-border px-6 text-center" role="alert"><div><h3 className="text-xl font-semibold">We couldn’t load the collection.</h3><p className="mt-2 text-sm text-muted-foreground">Check your connection and try again.</p><Button className="mt-6 rounded-none" onClick={() => refetch()} disabled={isFetching}><RefreshCw className={isFetching ? 'animate-spin' : ''} />Try again</Button></div></div>
         ) : results.length ? (
-          <div className="mt-8 grid grid-cols-2 gap-x-3 gap-y-10 md:grid-cols-3 md:gap-x-6 lg:grid-cols-4 lg:gap-y-14">{results.map((pair) => <PairCard pair={pair} key={pair.id} />)}</div>
+          <div className="mt-10 space-y-14 sm:space-y-16">
+            {promotion && promotedPairs.length ? (
+              <section aria-labelledby="promotion-heading" className="border border-store-accent/40 bg-store-accent/5 p-4 sm:p-6">
+                <div className="mb-6 flex flex-wrap items-end justify-between gap-4">
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-[0.18em] text-store-accent">Limited promotion</p>
+                    <h3 id="promotion-heading" className="mt-2 text-2xl font-semibold tracking-[-0.03em]">{promotion.name}</h3>
+                    <p className="mt-2 max-w-2xl text-sm leading-6 text-muted-foreground">{promotion.description}</p>
+                  </div>
+                  <p className="text-xs font-medium uppercase tracking-[0.12em] text-muted-foreground">
+                    {promotion.start_date} — {promotion.end_date}
+                  </p>
+                </div>
+                <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:grid-cols-3 md:gap-x-7 lg:grid-cols-5 lg:gap-x-8 lg:gap-y-14">
+                  {promotedPairs.map((pair) => <PairCard pair={pair} promotionOnly key={`promotion-${pair.id}`} />)}
+                </div>
+              </section>
+            ) : null}
+            {janoskis.length ? (
+              <section aria-labelledby="janoskis-heading">
+                <div className="mb-5 flex items-center gap-4">
+                  <h3 id="janoskis-heading" className="text-lg font-semibold tracking-[-0.025em] sm:text-xl">Janoskis</h3>
+                  <div className="h-px flex-1 bg-foreground" aria-hidden="true" />
+                </div>
+                <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:grid-cols-3 md:gap-x-7 lg:grid-cols-5 lg:gap-x-8 lg:gap-y-14">{janoskis.map((pair) => <PairCard pair={pair} key={pair.id} />)}</div>
+              </section>
+            ) : null}
+            {basketball.length ? (
+              <section aria-labelledby="basketball-heading">
+                <div className="mb-5 flex items-center gap-4">
+                  <h3 id="basketball-heading" className="text-lg font-semibold tracking-[-0.025em] sm:text-xl">Basketball</h3>
+                  <div className="h-px flex-1 bg-foreground" aria-hidden="true" />
+                </div>
+                <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:grid-cols-3 md:gap-x-7 lg:grid-cols-5 lg:gap-x-8 lg:gap-y-14">{basketball.map((pair) => <PairCard pair={pair} key={pair.id} />)}</div>
+              </section>
+            ) : null}
+          </div>
         ) : (
           <div className="mt-8 flex min-h-72 items-center justify-center border border-border px-6 text-center"><div className="max-w-md"><Search className="mx-auto size-6 text-muted-foreground" /><h3 className="mt-4 text-xl font-semibold">No matching pairs</h3><p className="mt-2 text-sm leading-6 text-muted-foreground">Try another search, size, or condition—or include the sold archive.</p><Button variant="outline" className="mt-6 rounded-none" onClick={clearAll}>Clear all filters</Button></div></div>
         )}
