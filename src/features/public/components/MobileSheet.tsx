@@ -34,7 +34,7 @@ export function MobileSheet({user}:{user:string}) {
           <p className="border-t border-border pt-5 text-sm text-muted-foreground">Your account keeps cart and checkout details connected across visits.</p>
           <nav aria-label="Account menu links" className="grid border-y border-border py-2 text-sm font-medium">
             <Link to="/#shop" className="storefront-focus min-h-11 content-center">Shop collection</Link>
-            <Link to="/#story" className="storefront-focus min-h-11 content-center">Our story</Link>
+            {/* <Link to="/#story" className="storefront-focus min-h-11 content-center">Our story</Link> */}
             <Link to="/?availability=sold#shop" className="storefront-focus min-h-11 content-center">Sold archive</Link>
             <Link to="/privacy-policy" className="storefront-focus min-h-11 content-center">Privacy policy</Link>
           </nav>

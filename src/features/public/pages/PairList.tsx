@@ -130,33 +130,7 @@ export function PairList() {
 
   return (
     <main id="main-content" className="mx-auto w-full max-w-[90rem] px-4 pb-20 sm:px-8 lg:px-12 xl:px-16">
-      <section id="story" aria-labelledby="story-heading" className="scroll-mt-20 border-b border-border py-10 sm:py-14">
-        <div className="grid gap-7 lg:grid-cols-[0.65fr_1.35fr] lg:gap-12">
-          <div>
-            <p className="mb-2 text-xs font-semibold uppercase tracking-[0.18em] text-store-accent">Our story</p>
-            <h2 id="story-heading" className="max-w-sm text-3xl font-semibold tracking-[-0.035em] sm:text-4xl">One pair became a point of view.</h2>
-          </div>
-          <div className="grid border-t border-border sm:grid-cols-3 sm:border-l sm:border-t-0">
-            <article className="border-b border-border py-6 sm:border-b-0 sm:border-r sm:px-6 sm:py-1">
-              <p className="text-xs font-semibold tabular-nums text-muted-foreground">01</p>
-              <h3 className="mt-4 text-lg font-semibold tracking-[-0.02em]">The pair I return to</h3>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">Janoskis are where my own collecting story keeps returning—and the pair that gave Scarce its focus.</p>
-            </article>
-            <article className="border-b border-border py-6 sm:border-b-0 sm:border-r sm:px-6 sm:py-1">
-              <p className="text-xs font-semibold tabular-nums text-muted-foreground">02</p>
-              <h3 className="mt-4 text-lg font-semibold tracking-[-0.02em]">What sold still matters</h3>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">Discontinued finds do not disappear from the story. The sold archive keeps a record of the pairs that shaped Scarce.</p>
-              <a href="/?availability=sold&q=janoski#shop" className="storefront-focus mt-4 inline-flex min-h-11 items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] hover:text-store-accent">View the archive <ArrowRight className="size-3.5" aria-hidden="true" /></a>
-            </article>
-            <article className="py-6 sm:px-6 sm:py-1">
-              <p className="text-xs font-semibold tabular-nums text-muted-foreground">03</p>
-              <h3 className="mt-4 text-lg font-semibold tracking-[-0.02em]">A wider rotation</h3>
-              <p className="mt-3 text-sm leading-6 text-muted-foreground">Basketball pairs are entering gradually, chosen with the same selective eye for what deserves another look.</p>
-              <a href="#shop" className="storefront-focus mt-4 inline-flex min-h-11 items-center gap-2 text-xs font-semibold uppercase tracking-[0.12em] hover:text-store-accent">See the current collection <ArrowRight className="size-3.5" aria-hidden="true" /></a>
-            </article>
-          </div>
-        </div>
-      </section>
+
 
       <section id="shop" aria-labelledby="catalog-heading" className="scroll-mt-20 pt-10 sm:pt-14">
         <div className="flex flex-wrap items-end justify-between gap-4">
