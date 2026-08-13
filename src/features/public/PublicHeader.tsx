@@ -2,7 +2,7 @@ import { Link } from 'react-router'
 import AuthModal from '../auth/pages/AuthModal'
 import { AppCart } from '../cart/AppCart'
 import { StorefrontThemeToggle } from './components/StorefrontThemeToggle'
-import { Search } from 'lucide-react'
+// import { Search } from 'lucide-react'
 
 export function PublicHeader() {
   return (
