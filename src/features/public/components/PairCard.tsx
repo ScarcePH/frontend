@@ -23,7 +23,7 @@ export function PairCard({ pair, promotionOnly = false }: { pair: PairObj; promo
             {isSoldOut ? 'SOLD' : isOnPromotion ? 'PROMO' : 'JUST IN'}
           </span>
         ) : null}
-        <img src={pair.image} alt={pair.name} loading="lazy" className="h-[88%] w-[88%] object-contain transition-transform duration-300 group-hover:scale-[1.035] motion-reduce:transition-none" />
+        <img src={pair.image} alt={pair.name} loading="lazy" className="h-[73%] w-[73%] object-contain transition-transform duration-300 group-hover:scale-[1.035] motion-reduce:transition-none" />
       </Link>
       <div className="flex flex-1 flex-col pt-2 sm:pt-3">
         <Link to={`/products/${pair.id}`} className="storefront-focus text-[0.8125rem] font-semibold leading-5 hover:underline hover:underline-offset-4 sm:text-sm">{pair.name}</Link>

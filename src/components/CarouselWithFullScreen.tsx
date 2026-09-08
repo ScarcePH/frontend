@@ -71,7 +71,7 @@ export default function CarouselWithFullScreen({ images, productName = 'Product'
             <img
               src={images[visibleIndex]}
               alt={`${productName}, view ${visibleIndex + 1} of ${images.length}`}
-              className="max-h-full max-w-full object-contain transition-transform duration-300 group-hover:scale-[1.015] motion-reduce:transition-none"
+              className="h-[73%] w-[73%] object-contain transition-transform duration-300 group-hover:scale-[1.015] motion-reduce:transition-none"
             />
             <span className="absolute bottom-2 right-2 flex size-11 items-center justify-center border border-border bg-background/90" aria-hidden="true">
               <Expand className="size-4" />
