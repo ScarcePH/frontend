@@ -23,14 +23,7 @@ import { useQuery } from "@tanstack/react-query";
 
 export const description = "A stacked bar chart with a legend"
 
-const chartData = [
-  { month: "January", spent: 186, profit: 80 },
-  { month: "February", spent: 305, profit: 200 },
-  { month: "March", spent: 237, profit: 120 },
-  { month: "April", spent: 73, profit: 190 },
-  { month: "May", spent: 209, profit: 130 },
-  { month: "June", spent: 214, profit: 140 },
-]
+
 
 const chartConfig = {
   spent: {
