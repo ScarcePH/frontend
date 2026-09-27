@@ -60,6 +60,7 @@ export function AddPair() {
   }
 
 
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -87,6 +88,7 @@ export function AddPair() {
           <InventoryForm
             value={inventory}
             onSubmit={handleInventorySubmit}
+            loading={addInventoryMutation.isPending}
           />
         )}
         {step === 2 && (

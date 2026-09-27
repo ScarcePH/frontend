@@ -1,9 +1,18 @@
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { CreateCustomer } from "@/api";
-import type { CustomerObj } from "@/features/admin/types/customer";
+import { useMutation, useQueryClient, useQuery } from "@tanstack/react-query"
+import { CreateCustomer, GetMessengerCustomer } from "@/api";
+import type { CustomerObj, MessengerCustomerObj } from "@/features/admin/types/customer";
 import { useState } from "react";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SelectLabel
+} from "@/components/ui/select"
 
 type Props = {
     setStep: ()=>void
@@ -33,27 +42,37 @@ export default function NewCustomer ({setStep,setCustomerData}:Props) {
         addCustomerMutation.mutate(customer)
         addCustomerMutation.isPending
     }
+
+    const {
+        data:msgrCust,
+        isLoading:loadingMsgrCust
+    } = useQuery<MessengerCustomerObj[]>({
+        queryKey: ["get-messenger-customers"],
+        queryFn:GetMessengerCustomer
+    });
+
   
     return (
         <div className="space-y-2 p-2 w-3/4 w-full">
-            <Input
-                placeholder="Sender ID"
-                required
-                className="text-xs"
-                onChange={(e)=>
-                    setCustomer({...customer, sender_id: e.target.value})
-                }
+            <Select 
+                onValueChange={(v)=>setCustomer({...customer, sender_id:v, name:msgrCust?.find((cust)=>cust.id === v)?.name || customer.name})} 
                 value={customer.sender_id}
-            />
-            <Input
-                placeholder="Fullname"  
-                className="text-xs"
-                onChange={(e)=>
-                    setCustomer({...customer, name: e.target.value})
-                }
-                value={customer.name}
-
-            />
+                disabled={loadingMsgrCust}
+            >
+                <SelectTrigger className="w-full">
+                    <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                    <SelectLabel>Messenger Customers</SelectLabel>
+                    {msgrCust?.map((customer) => (
+                        <SelectItem key={customer.id} value={customer.id}>
+                        {customer.name}
+                        </SelectItem>
+                    ))}
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
             <Input
                 placeholder="Address"
                 className="text-xs"

@@ -12,17 +12,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 type InventoryFormProps = {
   value: InventoryData
-  onSubmit: (data: InventoryData) => void
+  onSubmit: (data: InventoryData) => void,
+  loading: boolean
 }
 
-export function InventoryForm({ value, onSubmit }: InventoryFormProps) {
+export function InventoryForm({ value, onSubmit, loading }: InventoryFormProps) {
   const [form, setForm] = useState(value)
-  const [loading, setLoading] = useState(false)
 
   const submit = async () => {
-    setLoading(true)
     await onSubmit(form)
-    setLoading(false)
   }
   console.log(form.image);
   

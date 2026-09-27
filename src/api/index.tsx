@@ -135,6 +135,18 @@ async function GetBestSeller(){
     }
 }
 
+async function SalesBarChart(){
+    try {
+        const response = await api.get("/dashboard/sales-bar-chart")
+        return response.data
+    } catch (error) {
+        toast.error(
+            error instanceof Error ? error.message : "Failed to fetch sales bar chart data"
+        );
+        throw error
+    }
+}
+
 async function GetCustomers(){
     try {
         const response = await api.get('customer/get-all-from-messenger')
@@ -211,6 +223,18 @@ async function AddShipment(payload: AddShipmentParams){
         throw error
     }
 }
+
+async function GetMessengerCustomer(){
+    try {
+        const res = await api.get('customer/get-messenger-customer')
+        return res.data
+    } catch (error) {
+        toast.error(
+            error instanceof Error ? error.message : "Failed to get messenger customers"
+        );
+        throw error
+    }
+}
 export { 
     LoginAPI, 
     CheckToken,
@@ -226,5 +250,7 @@ export {
     CreateCustomer,
     CreateOrder,
     ChangePassword,
-    AddShipment
+    AddShipment,
+    GetMessengerCustomer,
+    SalesBarChart
 };
