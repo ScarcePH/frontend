@@ -32,6 +32,9 @@ export function BestSelling () {
     const [toggle, setToggle] = useState ([
         {isOpen:false},
         {isOpen:false},
+        {isOpen:false},
+        {isOpen:false},
+        {isOpen:false},
         {isOpen:false}
     ])
     const onToggle = (index:number) => {
@@ -43,7 +46,7 @@ export function BestSelling () {
     }
 
     return (
-        <div className="col-span-2 border rounded-lg border-grey-800 md:p-7 p-5">
+        <div className="col-span-2 row-span-2 border rounded-lg border-grey-800 md:p-7 p-5">
             <p className="text-xs md:text-sm ">
                 Best selling
             </p>

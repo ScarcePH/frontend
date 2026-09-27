@@ -2,7 +2,7 @@ import {  GetDashboardSummary } from "@/api";
 import {
   useQuery,
 } from '@tanstack/react-query'
-import { ClockFadingIcon, HandCoinsIcon, HistoryIcon, LandmarkIcon } from "lucide-react";
+import { ClockFadingIcon, HandCoinsIcon, HistoryIcon, LandmarkIcon, WarehouseIcon } from "lucide-react";
 import { deltaColor, formatPeso, pendingColor } from "@/utils/dashboard";
 import { SummaryCard } from "../component/SummaryCard";
 import { BestSelling } from "../component/BestSelling";
@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils"
 import { useNavigate } from 'react-router';
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import ReviewPayment from "./ReviewPayments";
+import {SalesChart} from "../component/SalesChart";
 
 
 function Dashboard() {
@@ -42,11 +43,18 @@ function Dashboard() {
     const weekly = data?.orders_this_week
     const revenue = data?.revenue_this_month
     const net_profit = data?.net_profit_this_month
+    const sitting_stocks = data?.total_value_in_stocks
+    const sitting_stocks_profit = data?.total_value_in_stocks_profit
+
     
 
     return (
         <div>
             <div className="m-6 grid grid-cols-2 md:grid-cols-5 gap-3 md:gap-6">
+                
+                <BestSelling/>
+
+               
                 <Dialog >
                     <DialogTrigger  className="cursor-pointer">  
                         <SummaryCard
@@ -63,17 +71,7 @@ function Dashboard() {
                         <ReviewPayment/>
                     </DialogContent>
                 </Dialog>
-                <Link  to="/admin/orders?status=confirmed" className="block">
-                    <SummaryCard
-                        trendIcon={<></>}
-                        title="Outstanding Balance"
-                        icon={<HandCoinsIcon className="w-4 h-4"/>}
-                        isLoading={isLoading}
-                        value={formatPeso(outstanding)}
-                        subtext={`Across ${outstandingCount} orders`}
-                    />
-                </Link>
-
+        
                 <SummaryCard
                     trendIcon={<Trend delta={weekly?.delta}/>}
                     title="Orders This Week"
@@ -96,6 +94,26 @@ function Dashboard() {
                         </span>
                     }
                 />
+                 <SummaryCard
+                        trendIcon={<></>}
+                        title="Stock Value Sitting"
+                        icon={<WarehouseIcon className="w-4 h-4"/>}
+                        isLoading={isLoading}
+                        value={formatPeso(sitting_stocks)}
+                        subtext={`Profit ${formatPeso(sitting_stocks_profit)}`}
+                />
+
+
+                <Link  to="/admin/orders?status=confirmed" className="block">
+                    <SummaryCard
+                        trendIcon={<></>}
+                        title="Outstanding Balance"
+                        icon={<HandCoinsIcon className="w-4 h-4"/>}
+                        isLoading={isLoading}
+                        value={formatPeso(outstanding)}
+                        subtext={`Across ${outstandingCount} orders`}
+                    />
+                </Link>
 
                 <SummaryCard
                     trendIcon={<Trend delta={revenue?.delta}/>}
@@ -122,7 +140,10 @@ function Dashboard() {
                     }
                 />
           
-                 <BestSelling/>
+                <div className="col-span-2 md:col-span-2 ">
+                    <SalesChart/>
+                </div>
+
             </div>
            
 
