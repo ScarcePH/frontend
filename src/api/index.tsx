@@ -135,6 +135,18 @@ async function GetBestSeller(){
     }
 }
 
+async function SalesBarChart(){
+    try {
+        const response = await api.get("/dashboard/sales-bar-chart")
+        return response.data
+    } catch (error) {
+        toast.error(
+            error instanceof Error ? error.message : "Failed to fetch sales bar chart data"
+        );
+        throw error
+    }
+}
+
 async function GetCustomers(){
     try {
         const response = await api.get('customer/get-all-from-messenger')
@@ -239,5 +251,6 @@ export {
     CreateOrder,
     ChangePassword,
     AddShipment,
-    GetMessengerCustomer
+    GetMessengerCustomer,
+    SalesBarChart
 };
