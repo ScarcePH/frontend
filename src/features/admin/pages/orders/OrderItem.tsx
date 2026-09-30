@@ -69,13 +69,13 @@ export function OrderItem ({status, item, data}:OrderProps){
                         Size: {item.variation.size} us
                     </p>
                     <p>
-                        Price: ₱{Math.abs(item.variation.price).toLocaleString()}
+                        Price: ₱{Math.abs(data.total_price).toLocaleString()}
                     </p>         
                     <p>
                         Spent: ₱{Math.abs(item.variation.spent).toLocaleString()}
                     </p>
                     <p>
-                        Profit: ₱{Math.abs(item.variation.price - item.variation.spent).toLocaleString()}
+                        Profit: ₱{(data.total_price - item.variation.spent).toLocaleString()}
                     </p>         
                 </div>
                 <div className="w-1/2 text-right">
