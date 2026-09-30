@@ -39,7 +39,8 @@ export type OrderObj = {
 
     payment: PaymentObj 
     shipment:ShipmentObj | undefined,
-    items:[]
+    items:[],
+    total_price:number
 
 }
 
@@ -47,7 +48,7 @@ export type OrderProps = {
     status:string
     item: {
         inventory:InventoryObj,
-        variation:VariationObj
+        variation:VariationObj,
     }
     data:OrderObj
 }
