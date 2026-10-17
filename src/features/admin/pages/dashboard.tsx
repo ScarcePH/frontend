@@ -13,6 +13,7 @@ import { useNavigate } from 'react-router';
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import ReviewPayment from "./ReviewPayments";
 import {SalesChart} from "../component/SalesChart";
+import {CC_Line_Chart} from "../component/CCLineChart";
 
 
 function Dashboard() {
@@ -140,8 +141,11 @@ function Dashboard() {
                     }
                 />
           
-                <div className="col-span-2 md:col-span-2 ">
+                <div className="col-span-2 md:col-span-2 row-span-2">
                     <SalesChart/>
+                </div>
+                <div className="col-span-2 md:col-span-2 row-span-2">
+                    <CC_Line_Chart/>
                 </div>
 
             </div>

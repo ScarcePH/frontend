@@ -26,14 +26,15 @@ export const description = "A stacked bar chart with a legend"
 
 
 const chartConfig = {
-  spent: {
-    label: "Spent",
-    color: "var(--chart-1)",
-  },
   profit: {
     label: "Profit",
     color: "var(--chart-2)",
   },
+  cost: {
+    label: "Cost",
+    color: "var(--chart-1)",
+  },
+ 
 } satisfies ChartConfig
 
 export function SalesChart() {
@@ -63,9 +64,9 @@ export function SalesChart() {
             <ChartTooltip content={<ChartTooltipContent hideLabel />} />
             <ChartLegend content={<ChartLegendContent />} />
             <Bar
-              dataKey="spent"
+              dataKey="cost"
               stackId="a"
-              fill="var(--color-spent)"
+              fill="var(--color-cost)"
               radius={[0, 0, 4, 4]}
             />
             <Bar

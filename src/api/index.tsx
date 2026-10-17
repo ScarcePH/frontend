@@ -147,6 +147,32 @@ async function SalesBarChart(){
     }
 }
 
+async function CostLineChart(){
+    try {
+        const response = await api.get("/dashboard/cc-statement")
+        return response.data
+    } catch (error) {
+        toast.error(
+            error instanceof Error ? error.message : "Failed to fetch cost line chart data"
+        );
+        throw error
+    }
+}
+
+async function GetPurchaseStatement(start_date: string, end_date: string){
+    try {
+        const response = await api.get("/dashboard/purchase-statement", {
+            params: { start_date, end_date }
+        })
+        return response.data
+    } catch (error) {
+        toast.error(
+            error instanceof Error ? error.message : "Failed to fetch purchase statement"
+        );
+        throw error
+    }
+}
+
 async function GetCustomers(){
     try {
         const response = await api.get('customer/get-all-from-messenger')
@@ -252,5 +278,7 @@ export {
     ChangePassword,
     AddShipment,
     GetMessengerCustomer,
-    SalesBarChart
+    SalesBarChart,
+    CostLineChart,
+    GetPurchaseStatement
 };
