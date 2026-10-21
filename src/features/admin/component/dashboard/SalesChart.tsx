@@ -65,9 +65,9 @@ export function SalesChart() {
             <ChartLegend content={<ChartLegendContent />} />
             <Bar
               dataKey="cost"
-              stackId="a"
+              stackId="b"
               fill="var(--color-cost)"
-              radius={[0, 0, 4, 4]}
+              radius={[4, 4, 0, 0]}
             />
             <Bar
               dataKey="profit"
