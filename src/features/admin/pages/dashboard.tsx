@@ -4,16 +4,16 @@ import {
 } from '@tanstack/react-query'
 import { ClockFadingIcon, HandCoinsIcon, HistoryIcon, LandmarkIcon, WarehouseIcon } from "lucide-react";
 import { deltaColor, formatPeso, pendingColor } from "@/utils/dashboard";
-import { SummaryCard } from "../component/SummaryCard";
-import { BestSelling } from "../component/BestSelling";
+import { SummaryCard } from "../component/dashboard/SummaryCard";
+import { BestSelling } from "../component/dashboard/BestSelling";
 import { Link } from "react-router";
 import { Trend } from "../component/Trend";
 import { cn } from "@/lib/utils"
 import { useNavigate } from 'react-router';
 import { Dialog, DialogContent, DialogTrigger } from "@/components/ui/dialog";
 import ReviewPayment from "./ReviewPayments";
-import {SalesChart} from "../component/SalesChart";
-import {CC_Line_Chart} from "../component/CCLineChart";
+import {SalesChart} from "../component/dashboard/SalesChart";
+import {CC_Line_Chart} from "../component/dashboard/CCLineChart";
 
 
 function Dashboard() {

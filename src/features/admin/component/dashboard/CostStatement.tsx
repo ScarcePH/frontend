@@ -1,13 +1,15 @@
-import { useQuery } from '@tanstack/react-query'
-import { GetPurchaseStatement } from '@/api'
-import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog'
+import { DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Spinner } from '@/components/ui/spinner'
 import { formatPeso } from '@/utils/dashboard'
+import { GetPurchaseStatement } from '@/api'
+import { useQuery } from '@tanstack/react-query'
+
 
 type PurchaseRecord = {
   variation_id: number
-  inventory_name: string
+  inventory_name: string,
+  date: string
   condition: string
   size: number | string
   total_spent: number
@@ -19,13 +21,6 @@ type PurchaseStatementResponse = {
   total_spent: number
   total_price: number
 }
-
-type PurchaseStatementModalProps = {
-  month: string | null
-  open: boolean
-  onOpenChange: (open: boolean) => void
-}
-
 
 
 function getDateRange(sampleDate:string) {
@@ -51,28 +46,23 @@ function getDateRange(sampleDate:string) {
     return { startDate, endDate };
 }
 
-export function PurchaseStatementModal({ month, open, onOpenChange }: PurchaseStatementModalProps) {
-  const dateRange = month ? getDateRange(month) : null
-  const statement = useQuery<PurchaseStatementResponse>({
-    queryKey: ['purchase-statement', dateRange?.startDate, dateRange?.endDate],
-    queryFn: () => GetPurchaseStatement(dateRange!.startDate, dateRange!.endDate),
-    enabled: open && dateRange !== null,
-  })
-  const response = statement.data
-  const records = Array.isArray(response)
-    ? response
-    : typeof response === 'object' && response !== null
-      ? (response as Record<string, unknown>).purchases ?? (response as Record<string, unknown>).data ?? (response as Record<string, unknown>).items
-      : []
-  const purchases = Array.isArray(records) ? records as PurchaseRecord[] : []
-
-
-
-
+const CostStatement = ({month}: {month: string | null}) => {
+    const dateRange = month ? getDateRange(month) : null
+    const statement = useQuery<PurchaseStatementResponse>({
+        queryKey: ['purchase-statement', dateRange?.startDate, dateRange?.endDate],
+        queryFn: () => GetPurchaseStatement(dateRange!.startDate, dateRange!.endDate),
+        enabled:  dateRange !== null,
+    })
+    const response = statement.data
+    const records = Array.isArray(response)
+        ? response
+        : typeof response === 'object' && response !== null
+        ? (response as Record<string, unknown>).purchases ?? (response as Record<string, unknown>).data ?? (response as Record<string, unknown>).items
+        : []
+    const purchases = Array.isArray(records) ? records as PurchaseRecord[] : []
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85dvh] md:!max-w-[60%] !max-w-[90%] overflow-y-auto">
-        <div className="space-y-1">
+    <>
+    <div className="space-y-1">
           <DialogTitle>Purchases for {month ?? 'selected month'}</DialogTitle>
           <DialogDescription>
             {statement.isSuccess ? `${purchases.length} ${purchases.length === 1 ? 'purchase' : 'purchases'}` : 'Purchase statement'} <br/>
@@ -101,6 +91,7 @@ export function PurchaseStatementModal({ month, open, onOpenChange }: PurchaseSt
             <TableHeader>
               <TableRow>
                 <TableHead>Variation ID</TableHead>
+                <TableHead>Purchase Date</TableHead>
                 <TableHead>Inventory</TableHead>
                 <TableHead>Condition</TableHead>
                 <TableHead>Size</TableHead>
@@ -112,6 +103,7 @@ export function PurchaseStatementModal({ month, open, onOpenChange }: PurchaseSt
               {purchases.map((purchase, index) => (
                 <TableRow key={`${purchase.variation_id}-${purchase.condition}-${purchase.size}-${index}`}>
                   <TableCell>{purchase.variation_id}</TableCell>
+                  <TableCell>{purchase.date}</TableCell>
                   <TableCell>{purchase.inventory_name}</TableCell>
                   <TableCell>{purchase.condition}</TableCell>
                   <TableCell>{purchase.size}</TableCell>
@@ -122,7 +114,9 @@ export function PurchaseStatementModal({ month, open, onOpenChange }: PurchaseSt
             </TableBody>
           </Table>
         )}
-      </DialogContent>
-    </Dialog>
-  )
-}
+
+    </>
+  );
+};
+
+export default CostStatement;

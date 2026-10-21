@@ -18,7 +18,7 @@ import {
 import { CostLineChart } from "@/api"
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
-import { PurchaseStatementModal } from "./PurchaseStatementModal";
+import { StatementModal } from "./StatementModal";
 
 export const description = "A multiple line chart"
 
@@ -41,7 +41,8 @@ const chartConfig = {
 
 export function CC_Line_Chart() {
   const [selectedMonth, setSelectedMonth] = useState<string | null>(null)
-  const [openModal, setOpenModal] = useState(false)
+  const [openModal, setOpenModal] = useState<boolean>(false)
+  const [breakdownType, setBreakdownType] = useState<"cost" | "payment_received">("cost")
 
   const {
     data: chartData,
@@ -73,13 +74,6 @@ export function CC_Line_Chart() {
             <LineChart
               accessibilityLayer
               data={chartData}
-              onClick={(state) => {
-                const month = state?.activeLabel
-                if (typeof month === "string") {
-                  setSelectedMonth(month)
-                  setOpenModal(true)
-                }
-              }}
               margin={{
                 left: 60,
                 right: 30,
@@ -99,26 +93,52 @@ export function CC_Line_Chart() {
                 type="monotone"
                 stroke="var(--color-payment_received)"
                 strokeWidth={2}
-                dot={{ r: 4, cursor: "pointer" }}
-                activeDot={{ r: 6, cursor: "pointer" }}
+                dot={{ 
+                  r: 4, cursor: "pointer",
+                 
+                }}
+                activeDot={{ 
+                  r: 6, cursor: "pointer",
+                   onClick: (event: any, props: any) => {
+                    if (typeof props.payload.month === "string") {
+                      setSelectedMonth(props.payload.month)
+                      setBreakdownType("payment_received")
+                      setOpenModal(true)
+                    }
+               
+                  }, 
+                }}
+                
               />
               <Line
                 dataKey="cost"
                 type="monotone"
                 stroke="var(--color-cost)"
                 strokeWidth={2}
-                dot={{ r: 4, cursor: "pointer" }}
-                activeDot={{ r: 6, cursor: "pointer" }}
+                dot={{ 
+                  r: 4, cursor: "pointer",
+               
+                }}
+                activeDot={{ r: 6, cursor: "pointer",
+                  onClick: (event: any, props: any) => {
+                    if (typeof props.payload.month === "string") {
+                      setSelectedMonth(props.payload.month)
+                      setBreakdownType("cost")
+                      setOpenModal(true)
+                    }
+                  },
+                }}
               />
           
             </LineChart>
           </ChartContainer>
-          <PurchaseStatementModal
+          <StatementModal
+            type={breakdownType}
             month={selectedMonth}
             open={openModal}
-            onOpenChange={(open) => { 
+            onOpenChange={(open: boolean) => { 
               setOpenModal(open)
-            }}
+            }}            
           />
           </>
         ) : (

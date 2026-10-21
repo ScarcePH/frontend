@@ -173,6 +173,20 @@ async function GetPurchaseStatement(start_date: string, end_date: string){
     }
 }
 
+async function GetIncomeStatement(start_date: string, end_date: string){
+    try {
+        const response = await api.get("/dashboard/income-statement", {
+            params: { start_date, end_date }
+        })
+        return response.data
+    } catch (error) {
+        toast.error(
+            error instanceof Error ? error.message : "Failed to fetch income statement"
+        );
+        throw error
+    }
+}
+
 async function GetCustomers(){
     try {
         const response = await api.get('customer/get-all-from-messenger')
@@ -280,5 +294,6 @@ export {
     GetMessengerCustomer,
     SalesBarChart,
     CostLineChart,
-    GetPurchaseStatement
+    GetPurchaseStatement,
+    GetIncomeStatement
 };
