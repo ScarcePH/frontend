@@ -66,8 +66,11 @@ const CostStatement = ({month}: {month: string | null}) => {
           <DialogTitle>Purchases for {month ?? 'selected month'}</DialogTitle>
           <DialogDescription>
             {statement.isSuccess ? `${purchases.length} ${purchases.length === 1 ? 'purchase' : 'purchases'}` : 'Purchase statement'} <br/>
-            Total purchases: {statement.isSuccess && response ? formatPeso(Number(response.total_spent)) : 'N/A'}
           </DialogDescription>
+        </div>
+        <div className="rounded-md border p-3">
+          <p className="text-sm text-muted-foreground">Total Spent</p>
+          <p className="font-semibold tabular-nums">{statement.isSuccess && response ? formatPeso(Number(response.total_spent)) : 'N/A'}</p>
         </div>
 
         {!dateRange ? (

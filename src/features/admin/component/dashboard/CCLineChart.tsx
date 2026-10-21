@@ -100,7 +100,7 @@ export function CC_Line_Chart() {
                 activeDot={{ 
                   r: 6, cursor: "pointer",
                    onClick: (event: any, props: any) => {
-                    if (typeof props.payload.month === "string") {
+                    if (typeof props.payload.month === "string" && event) {
                       setSelectedMonth(props.payload.month)
                       setBreakdownType("payment_received")
                       setOpenModal(true)
@@ -121,7 +121,7 @@ export function CC_Line_Chart() {
                 }}
                 activeDot={{ r: 6, cursor: "pointer",
                   onClick: (event: any, props: any) => {
-                    if (typeof props.payload.month === "string") {
+                    if (typeof props.payload.month === "string" && event) {
                       setSelectedMonth(props.payload.month)
                       setBreakdownType("cost")
                       setOpenModal(true)

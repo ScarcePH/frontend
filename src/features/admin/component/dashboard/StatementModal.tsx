@@ -16,7 +16,6 @@ type PurchaseStatementModalProps = {
 
 
 export function StatementModal({ month, open, onOpenChange, type }: PurchaseStatementModalProps) {
- console.log(type)
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[85dvh] md:!max-w-[60%] !max-w-[90%] overflow-y-auto">
