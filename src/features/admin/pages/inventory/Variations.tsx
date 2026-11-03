@@ -51,7 +51,11 @@ export function Variations({pair}: VariationsProps){
 
 
             <div className="shrink-0 flex justify-center py-2">
-                <CarouselWithFullScreen images={carousel}/>
+                <img
+                    src={pair.image}
+                    alt={pair.name}
+                    className="h-32 w-32 object-contain"
+                />
             </div>
 
             <PopoverTrigger asChild>

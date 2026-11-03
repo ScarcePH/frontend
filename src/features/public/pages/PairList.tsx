@@ -212,8 +212,8 @@ export function PairList() {
             {janoskis.length ? (
               <section aria-labelledby="janoskis-heading">
                 <div className="mb-5 flex items-center gap-4">
-                  <h3 id="janoskis-heading" className="text-lg font-semibold tracking-[-0.025em] sm:text-xl">Janoskis</h3>
-                  <div className="h-px flex-1 bg-foreground" aria-hidden="true" />
+                  <h3 id="janoskis-heading" className="text-lg font-semibold tracking-[-0.025em] sm:text-md">Janoskis</h3>
+                  {/* <div className="h-px flex-1 bg-foreground" aria-hidden="true" /> */}
                 </div>
                 <div className="grid grid-cols-2 gap-x-5 gap-y-10 md:grid-cols-3 md:gap-x-7 lg:grid-cols-5 lg:gap-x-8 lg:gap-y-14">{janoskis.map((pair) => <PairCard pair={pair} key={pair.id} />)}</div>
               </section>
