@@ -10,7 +10,6 @@ export interface VariationObj {
   stock: number
   isOpen: boolean,
   status:string,
-  spent:number,
   files: File[]|null,
 }
 
@@ -24,7 +23,6 @@ export const createVariation = (): VariationObj => ({
   stock: 0,
   isOpen: false,
   status:'',
-  spent:0,
   files: []
 })
 

@@ -151,17 +151,6 @@ export function VariationItem({
                       /> 
                   </div> 
                   <div className="grid gap-1"> 
-                      <Label htmlFor="inv-name" className="text-xs"> Spent </Label> 
-                      <Input
-                          placeholder={"₱5000"} 
-                          required 
-                          type="number" 
-                          className="text-xs w-full"  
-                          value={data.spent === 0 ? "" : data.spent}
-                          onChange={e => onUpdate("spent", Number(e.target.value))}
-                      /> 
-                  </div> 
-                  <div className="grid gap-1"> 
                       <Label htmlFor="inv-name" className="text-xs"> Quantity </Label> 
                       <Input
                           placeholder={"1"} 

@@ -3,6 +3,12 @@ import api from "./setup";
 import type { AddShipmentParams, UpdateOrderParams, VariationParams } from "@/features/admin/types/api";
 import type { CustomerObj } from "@/features/admin/types/customer";
 import type { ProductCategory } from "@/types/category";
+import type {
+    CreatePurchasePayload,
+    Purchase,
+    PurchaseQuery,
+    PurchaseStatementResponse,
+} from "@/features/admin/types/purchase";
 
 async function 
 LoginAPI(email: string, password: string) {
@@ -159,7 +165,7 @@ async function CostLineChart(){
     }
 }
 
-async function GetPurchaseStatement(start_date: string, end_date: string){
+async function GetPurchaseStatement(start_date: string, end_date: string): Promise<PurchaseStatementResponse>{
     try {
         const response = await api.get("/dashboard/purchase-statement", {
             params: { start_date, end_date }
@@ -168,6 +174,43 @@ async function GetPurchaseStatement(start_date: string, end_date: string){
     } catch (error) {
         toast.error(
             error instanceof Error ? error.message : "Failed to fetch purchase statement"
+        );
+        throw error
+    }
+}
+
+async function CreatePurchase(payload: CreatePurchasePayload): Promise<{ message: string; purchase: Purchase }>{
+    try {
+        const response = await api.post("/purchases", payload)
+        toast.success(response.data.message ?? "Purchase record created")
+        return response.data
+    } catch (error) {
+        toast.error(
+            error instanceof Error ? error.message : "Failed to create purchase record"
+        );
+        throw error
+    }
+}
+
+async function GetPurchases(params: PurchaseQuery = {}): Promise<{purchases: Purchase[]}>{
+    try {
+        const response = await api.get("/purchases", { params })
+        return response.data
+    } catch (error) {
+        toast.error(
+            error instanceof Error ? error.message : "Failed to fetch purchase records"
+        );
+        throw error
+    }
+}
+
+async function GetPurchase(id: number): Promise<{purchase: Purchase}>{
+    try {
+        const response = await api.get(`/purchases/${id}`)
+        return response.data
+    } catch (error) {
+        toast.error(
+            error instanceof Error ? error.message : "Failed to fetch purchase record"
         );
         throw error
     }
@@ -295,5 +338,8 @@ export {
     SalesBarChart,
     CostLineChart,
     GetPurchaseStatement,
+    CreatePurchase,
+    GetPurchases,
+    GetPurchase,
     GetIncomeStatement
 };

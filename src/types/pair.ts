@@ -14,7 +14,6 @@ export interface VariationObj {
   stock: number
   isOpen: boolean,
   status:string,
-  spent:number
 }
 
 export type ActivePromotion = {
