@@ -15,10 +15,11 @@ import {
   ChartTooltipContent,
   type ChartConfig,
 } from "@/components/ui/chart"
-import { CostLineChart } from "@/api"
+import { CostLineChart, GetPurchaseStatement } from "@/api"
 import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { StatementModal } from "./StatementModal";
+import { getStatementDateRange } from "@/utils/dashboard";
 
 export const description = "A multiple line chart"
 
@@ -28,9 +29,22 @@ type CostLineChartPoint = {
   payment_received: number
 }
 
+async function getCostLineChartData(): Promise<CostLineChartPoint[]> {
+  const periods: CostLineChartPoint[] = await CostLineChart()
+  return Promise.all(periods.map(async (period) => {
+    const dateRange = getStatementDateRange(period.month)
+    if (!dateRange) {
+      throw new Error(`Unable to determine dates for purchase statement: ${period.month}`)
+    }
+
+    const statement = await GetPurchaseStatement(dateRange.startDate, dateRange.endDate)
+    return { ...period, cost: statement.total_spent }
+  }))
+}
+
 const chartConfig = {
   cost: {
-    label: "Cost",
+    label: "Purchase cost",
     color: "var(--chart-1)",
   },
   payment_received: {
@@ -49,7 +63,7 @@ export function CC_Line_Chart() {
     isLoading,
     isError,
   } = useQuery<CostLineChartPoint[]>({
-    queryFn: CostLineChart,
+    queryFn: getCostLineChartData,
     queryKey: ["cc-statement"],
   })
 
@@ -57,7 +71,7 @@ export function CC_Line_Chart() {
     <Card>
       <CardHeader>
         <CardTitle>Credit card cycle</CardTitle>
-        <CardDescription>Based on last 3 month statement</CardDescription>
+        <CardDescription>Purchase costs and payments over the last 3 billing periods</CardDescription>
       </CardHeader>
       <CardContent>
         {isLoading ? (

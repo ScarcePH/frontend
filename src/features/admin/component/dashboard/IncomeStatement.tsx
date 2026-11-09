@@ -1,13 +1,12 @@
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Spinner } from '@/components/ui/spinner'
-import { formatPeso } from '@/utils/dashboard'
+import { formatPeso, getStatementDateRange } from '@/utils/dashboard'
 import { GetIncomeStatement } from '@/api'
 import { useQuery } from '@tanstack/react-query'
 
 
 type IncomeRecord = {
-  order_id: number
   variation_id: number
   inventory_name: string
   condition: string
@@ -26,31 +25,8 @@ type IncomeStatementResponse = {
 }
 
 
-function getDateRange(sampleDate:string) {
-    const [start, end] = sampleDate.split(" - ");
-
-    const currentYear = new Date().getFullYear();
-
-    const parseDate = (date: string, year: number) => {
-        const parsed = new Date(`${date}, ${year}`);
-
-        return `${parsed.getFullYear()}/${String(
-        parsed.getMonth() + 1
-        ).padStart(2, "0")}/${String(parsed.getDate()).padStart(2, "0")}`;
-    };
-
-    const startDate = parseDate(start, currentYear);
-    let endDate = parseDate(end, currentYear);
-
-    if (new Date(endDate) < new Date(startDate)) {
-        endDate = parseDate(end, currentYear + 1);
-    }
-
-    return { startDate, endDate };
-}
-
 const IncomeStatement = ({month}: {month: string | null}) => {
-    const dateRange = month ? getDateRange(month) : null
+    const dateRange = month ? getStatementDateRange(month) : null
     const statement = useQuery<IncomeStatementResponse>({
         queryKey: ['income-statement', dateRange?.startDate, dateRange?.endDate],
         queryFn: () => GetIncomeStatement(dateRange!.startDate, dateRange!.endDate),
@@ -81,6 +57,9 @@ const IncomeStatement = ({month}: {month: string | null}) => {
           </div>
         ) : response ? (
           <>
+            <p className="text-xs text-muted-foreground">
+              Purchase records are not yet included in sold-stock costs or net profit.
+            </p>
             <div className="grid gap-3 sm:grid-cols-3">
               <div className="rounded-md border p-3">
                 <p className="text-sm text-muted-foreground">Total Received</p>
@@ -104,7 +83,6 @@ const IncomeStatement = ({month}: {month: string | null}) => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead>Order ID</TableHead>
                     <TableHead>Variation ID</TableHead>
                     <TableHead>Inventory</TableHead>
                     <TableHead>Date Sold</TableHead>
@@ -116,9 +94,8 @@ const IncomeStatement = ({month}: {month: string | null}) => {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {income.map((record) => (
-                    <TableRow key={`${record.order_id}-${record.variation_id}`}>
-                      <TableCell>{record.order_id}</TableCell>
+                  {income.map((record, index) => (
+                    <TableRow key={`${record.variation_id}-${index}`}>
                       <TableCell>{record.variation_id}</TableCell>
                       <TableCell>{record.inventory_name}</TableCell>
                       <TableCell>{record.date}</TableCell>

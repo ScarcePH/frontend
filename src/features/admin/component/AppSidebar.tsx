@@ -6,6 +6,7 @@ import {
   ChevronDown,
   LogOut,
   Tag,
+  Receipt,
 } from "lucide-react"
 
 import {
@@ -48,6 +49,11 @@ const items = [
     title: "Pairs",
     url: "/admin/pairs",
     icon: Footprints,
+  },
+  {
+    title: "Purchases",
+    url: "/admin/purchases",
+    icon: Receipt,
   },
   {
     title: "Promotions",

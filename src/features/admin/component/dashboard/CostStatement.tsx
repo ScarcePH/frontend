@@ -1,76 +1,33 @@
 import { DialogDescription, DialogTitle } from '@/components/ui/dialog'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { Spinner } from '@/components/ui/spinner'
-import { formatPeso } from '@/utils/dashboard'
+import { formatPeso, getStatementDateRange } from '@/utils/dashboard'
 import { GetPurchaseStatement } from '@/api'
 import { useQuery } from '@tanstack/react-query'
+import type { PurchaseStatementResponse } from '@/features/admin/types/purchase'
 
-
-type PurchaseRecord = {
-  variation_id: number
-  inventory_name: string,
-  date: string
-  condition: string
-  size: number | string
-  total_spent: number
-  total_price: number
-}
-
-type PurchaseStatementResponse = {
-  purchases: PurchaseRecord[]
-  total_spent: number
-  total_price: number
-}
-
-
-function getDateRange(sampleDate:string) {
-    const [start, end] = sampleDate.split(" - ");
-
-    const currentYear = new Date().getFullYear();
-
-    const parseDate = (date: string, year: number) => {
-        const parsed = new Date(`${date}, ${year}`);
-
-        return `${parsed.getFullYear()}/${String(
-        parsed.getMonth() + 1
-        ).padStart(2, "0")}/${String(parsed.getDate()).padStart(2, "0")}`;
-    };
-
-    const startDate = parseDate(start, currentYear);
-    let endDate = parseDate(end, currentYear);
-
-    if (new Date(endDate) < new Date(startDate)) {
-        endDate = parseDate(end, currentYear + 1);
-    }
-
-    return { startDate, endDate };
-}
 
 const CostStatement = ({month}: {month: string | null}) => {
-    const dateRange = month ? getDateRange(month) : null
+    const dateRange = month ? getStatementDateRange(month) : null
     const statement = useQuery<PurchaseStatementResponse>({
         queryKey: ['purchase-statement', dateRange?.startDate, dateRange?.endDate],
         queryFn: () => GetPurchaseStatement(dateRange!.startDate, dateRange!.endDate),
         enabled:  dateRange !== null,
     })
     const response = statement.data
-    const records = Array.isArray(response)
-        ? response
-        : typeof response === 'object' && response !== null
-        ? (response as Record<string, unknown>).purchases ?? (response as Record<string, unknown>).data ?? (response as Record<string, unknown>).items
-        : []
-    const purchases = Array.isArray(records) ? records as PurchaseRecord[] : []
+    const purchases = response?.data ?? []
+    const purchaseCount = new Set(purchases.map((purchase) => purchase.purchase_id)).size
   return (
     <>
     <div className="space-y-1">
           <DialogTitle>Purchases for {month ?? 'selected month'}</DialogTitle>
           <DialogDescription>
-            {statement.isSuccess ? `${purchases.length} ${purchases.length === 1 ? 'purchase' : 'purchases'}` : 'Purchase statement'} <br/>
+            {statement.isSuccess ? `${purchaseCount} ${purchaseCount === 1 ? 'purchase' : 'purchases'}` : 'Purchase statement'} <br/>
           </DialogDescription>
         </div>
         <div className="rounded-md border p-3">
           <p className="text-sm text-muted-foreground">Total Spent</p>
-          <p className="font-semibold tabular-nums">{statement.isSuccess && response ? formatPeso(Number(response.total_spent)) : 'N/A'}</p>
+          <p className="font-semibold tabular-nums">{statement.isSuccess && response ? formatPeso(response.total_spent) : 'N/A'}</p>
         </div>
 
         {!dateRange ? (
@@ -93,23 +50,33 @@ const CostStatement = ({month}: {month: string | null}) => {
           <Table>
             <TableHeader>
               <TableRow>
+                <TableHead>Purchase ID</TableHead>
                 <TableHead>Variation ID</TableHead>
                 <TableHead>Purchase Date</TableHead>
+                <TableHead>Supplier</TableHead>
                 <TableHead>Inventory</TableHead>
                 <TableHead>Condition</TableHead>
                 <TableHead>Size</TableHead>
+                <TableHead>Quantity</TableHead>
+                <TableHead>Unit Cost</TableHead>
+                <TableHead>Allocated Fees</TableHead>
                 <TableHead>Total Spent</TableHead>
                 <TableHead>Total Price</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {purchases.map((purchase, index) => (
-                <TableRow key={`${purchase.variation_id}-${purchase.condition}-${purchase.size}-${index}`}>
-                  <TableCell>{purchase.variation_id}</TableCell>
-                  <TableCell>{purchase.date}</TableCell>
+                <TableRow key={`${purchase.purchase_id}-${purchase.variation_id}-${index}`}>
+                  <TableCell>{purchase.purchase_id}</TableCell>
+                  <TableCell>{purchase.variation_id ?? '—'}</TableCell>
+                  <TableCell>{purchase.purchase_date}</TableCell>
+                  <TableCell>{purchase.supplier ?? '—'}</TableCell>
                   <TableCell>{purchase.inventory_name}</TableCell>
-                  <TableCell>{purchase.condition}</TableCell>
-                  <TableCell>{purchase.size}</TableCell>
+                  <TableCell>{purchase.condition ?? '—'}</TableCell>
+                  <TableCell>{purchase.size ?? '—'}</TableCell>
+                  <TableCell>{purchase.quantity}</TableCell>
+                  <TableCell>{formatPeso(purchase.unit_cost)}</TableCell>
+                  <TableCell>{formatPeso(purchase.allocated_fees)}</TableCell>
                   <TableCell>{formatPeso(Number(purchase.total_spent))}</TableCell>
                   <TableCell>{formatPeso(Number(purchase.total_price))}</TableCell>
                 </TableRow>

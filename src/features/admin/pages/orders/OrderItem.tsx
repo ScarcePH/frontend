@@ -13,7 +13,7 @@ export function OrderItem ({status, item, data}:OrderProps){
         <Card className="p-4 h-auto text-xs md:text-sm max-w-sm md:max-w-md">
             <div className="flex justify-between">
                     <Badge>
-                        {status?.toLocaleUpperCase()}
+                        {status?.toLocaleUpperCase()} #{data.id}
                     </Badge>
                 <p className="text-xs">{new Date(data.created_at).toLocaleString()}</p>
             </div>
@@ -70,12 +70,6 @@ export function OrderItem ({status, item, data}:OrderProps){
                     </p>
                     <p>
                         Price: ₱{Math.abs(data.total_price).toLocaleString()}
-                    </p>         
-                    <p>
-                        Spent: ₱{Math.abs(item.variation.spent).toLocaleString()}
-                    </p>
-                    <p>
-                        Profit: ₱{(data.total_price - item.variation.spent).toLocaleString()}
                     </p>         
                 </div>
                 <div className="w-1/2 text-right">
